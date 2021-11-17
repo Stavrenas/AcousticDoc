@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/SelectFragment"
         android:name="com.example.acousticdoc.SelectFragment"
-        android:label="@string/first_fragment_label"
+        android:label="@string/select_fragment_label"
         tools:layout="@layout/fragment_select">
 
         <action
@@ -18,15 +18,48 @@
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
             app:popExitAnim="@anim/nav_default_pop_exit_anim" />
-    </fragment>
+    <action
+        android:id="@+id/action_SelectFragment_to_RecordFragment"
+        app:destination="@id/RecordFragment"
+        app:enterAnim="@anim/nav_default_enter_anim"
+        app:exitAnim="@anim/nav_default_exit_anim"
+        app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+        app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+</fragment>
     <fragment
         android:id="@+id/SoundFragment"
         android:name="com.example.acousticdoc.SoundFragment"
-        android:label="@string/second_fragment_label"
+        android:label="@string/sound_fragment_label"
         tools:layout="@layout/fragment_sound">
 
         <action
             android:id="@+id/action_SoundFragment_to_SelectFragment"
-            app:destination="@id/SelectFragment" />
+            app:destination="@id/SelectFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+    </fragment>
+    <fragment
+        android:id="@+id/RecordFragment"
+        android:name="com.example.acousticdoc.RecordFragment"
+        android:label="@string/record_fragment_label"
+        tools:layout="@layout/fragment_record">
+
+        <action
+            android:id="@+id/action_RecordFragment_to_SoundFragment"
+            app:destination="@id/SoundFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+        <action
+            android:id="@+id/action_RecordFragment_to_SelectFragment"
+            app:destination="@id/SelectFragment"
+            app:popUpTo="@id/SelectFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
     </fragment>
 </navigation>

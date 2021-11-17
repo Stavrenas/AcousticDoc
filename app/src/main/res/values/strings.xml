@@ -2,8 +2,9 @@
     <string name="app_name">AcousticDoc</string>
     <string name="action_settings">Settings</string>
     <!-- Strings used for fragments for navigation -->
-    <string name="first_fragment_label">Sound Selection</string>
-    <string name="second_fragment_label">Diagnosis</string>
+    <string name="select_fragment_label">Sound Selection</string>
+    <string name="sound_fragment_label">Diagnosis</string>
+    <string name="record_fragment_label">Record</string>
     <string name="select">Select File</string>
     <string name="play">Play</string>
     <string name="pause">Pause</string>
@@ -16,4 +17,9 @@
     <string name="diagnosis">Diagnosis</string>
     <string name="breathing">Breathing</string>
     <string name="cough">Cough</string>
+    <string name="name_input">Type the desired file name.</string>
+    <string name="file_name">File Name</string>
+    <string name="start_recording">Start Recording</string>
+    <string name="stop_recording">Stop Recording</string>
+    <string name="now_recording">Now Recording...</string>
 </resources>

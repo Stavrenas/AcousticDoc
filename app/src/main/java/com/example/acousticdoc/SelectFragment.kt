@@ -51,10 +51,11 @@ class SelectFragment : Fragment() {
             val intent = Intent(Intent.ACTION_GET_CONTENT)
             intent.type = "audio/*" // specify "audio/mp3" to filter only mp3 files
             startActivityForResult(intent, 1)
-            //findNavController().navigate(R.id.action_SelectFragment_to_SoundFragment)
+
         }
 
         binding.add.setOnClickListener {
+            findNavController().navigate(R.id.action_SelectFragment_to_RecordFragment)
             Toast.makeText(
                 context,
                 "Record sound",
