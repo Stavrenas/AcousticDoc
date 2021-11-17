@@ -82,7 +82,7 @@ class SoundFragment : Fragment() {
                 "$selected ",
                 Toast.LENGTH_SHORT
             ).show()
-            ///findNavController().navigate(R.id.action_SoundFragment_to_SelectFragment)
+            ////findNavController().navigate(R.id.action_SoundFragment_to_SelectFragment)
         }
     }
 
