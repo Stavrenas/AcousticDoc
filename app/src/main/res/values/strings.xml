@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">AcousticDoc</string>
+    <string name="action_settings">Settings</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">Sound Selection</string>
+    <string name="second_fragment_label">Diagnosis</string>
+    <string name="select">Select File</string>
+    <string name="play">Play</string>
+    <string name="pause">Pause</string>
+    <string name="title">The title of the chosen file is</string>
+    <string name="type">Type of sound</string>
+
+    <string name="sound_select">Select or add a new sound file</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="record_sound">Record sound</string>
+    <string name="diagnosis">Diagnosis</string>
+    <string name="breathing">Breathing</string>
+    <string name="cough">Cough</string>
+</resources>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/SelectFragment">
+
+    <fragment
+        android:id="@+id/SelectFragment"
+        android:name="com.example.acousticdoc.SelectFragment"
+        android:label="@string/first_fragment_label"
+        tools:layout="@layout/fragment_select">
+
+        <action
+            android:id="@+id/action_SelectFragment_to_SoundFragment"
+            app:destination="@id/SoundFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+    </fragment>
+    <fragment
+        android:id="@+id/SoundFragment"
+        android:name="com.example.acousticdoc.SoundFragment"
+        android:label="@string/second_fragment_label"
+        tools:layout="@layout/fragment_sound">
+
+        <action
+            android:id="@+id/action_SoundFragment_to_SelectFragment"
+            app:destination="@id/SelectFragment" />
+    </fragment>
+</navigation>
