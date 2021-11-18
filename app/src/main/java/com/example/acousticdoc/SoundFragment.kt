@@ -14,6 +14,8 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import android.media.MediaPlayer.OnCompletionListener
+import android.util.Log
 
 
 /**
@@ -30,6 +32,7 @@ class SoundFragment : Fragment() {
     var playing = 1
     var mediaPlayer = MediaPlayer()
 
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -42,7 +45,6 @@ class SoundFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val fullSoundUri = sharedViewModel.getModelUri()
-
 
         if (fullSoundUri != null) {
             binding.soundTitle.setText(context?.let { fullSoundUri.getName(it) })
@@ -57,11 +59,18 @@ class SoundFragment : Fragment() {
                     .setUsage(AudioAttributes.USAGE_MEDIA)
                     .build()
             )
+            setOnCompletionListener(
+                {
+                    if(playing == 0)
+                    pauseMusic()
+                }
+            )
             if (myUri != null) {
                 context?.let { setDataSource(it, myUri) }
             }
             prepare()
         }
+
 
         binding.play.setOnClickListener {
             toggle()
@@ -101,9 +110,11 @@ class SoundFragment : Fragment() {
         binding.play.setText(R.string.play)
     }
      private fun startMusic() {
+         val fullSoundUri = sharedViewModel.getModelUri()
          mediaPlayer.start()
          playing = 0
          binding.play.setText(R.string.pause)
+         Log.d("URI","URI $fullSoundUri")
      }
 
     private fun Uri.getName(context: Context): String? {
@@ -112,13 +123,20 @@ class SoundFragment : Fragment() {
         returnCursor?.moveToFirst()
         val fileName = nameIndex?.let { returnCursor?.getString(it) }
         returnCursor?.close()
-        return fileName
+        if(fileName == null) {
+          val fullFileName = this.toString()
+            return fullFileName.substring(fullFileName.lastIndexOf("/") + 1, fullFileName.length);
+        }
+        else {
+            return fileName
+        }
     }
 
 
 
     override fun onDestroyView() {
-        pauseMusic()
+        if(playing == 0)
+        mediaPlayer.pause()
         super.onDestroyView()
         _binding = null
 

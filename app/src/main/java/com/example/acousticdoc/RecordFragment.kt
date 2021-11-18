@@ -16,6 +16,12 @@ import android.text.TextWatcher
 import android.widget.EditText
 import android.widget.Toast
 
+import android.media.MediaRecorder
+import android.net.Uri
+import android.os.Environment
+import androidx.navigation.fragment.findNavController
+import java.io.File
+
 
 class RecordFragment  : Fragment()  {
 
@@ -27,6 +33,9 @@ class RecordFragment  : Fragment()  {
     private val binding get() = _binding!!
     private val sharedViewModel: ViewModel by activityViewModels()
     var state =0
+    val mRecorder = MediaRecorder()
+
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -59,19 +68,25 @@ class RecordFragment  : Fragment()  {
             }
 
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-//                if (myEditText.text.toString() == ""){
-//                    binding.recording.isEnabled = false
-//                }
-//                else{
-//                    binding.recording.isEnabled = true
-//                }
-            }
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
         })
 
 
         binding.recording.setOnClickListener {
+            var fileName = context?.getExternalFilesDir(null)?.absolutePath
+
+            fileName +=  "/" + myEditText.text.toString()  + ".3gp"
+
             if (state == 0){
+
+                mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC)
+                mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
+                mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
+                mRecorder.setOutputFile(fileName)
+
+                mRecorder.prepare()
+                mRecorder.start()
+
                 binding.recording.setText(R.string.stop_recording)
                 binding.input.visibility =View.GONE
                 binding.textView2.visibility = View.GONE
@@ -82,23 +97,17 @@ class RecordFragment  : Fragment()  {
             }
             else if (state == 1){
                 binding.recording.isEnabled = false
-                Toast.makeText(context,"Stopped Recording", Toast.LENGTH_LONG)
+                mRecorder.stop();
+                mRecorder.release();
+                sharedViewModel.setModelUri(Uri.fromFile(File(fileName)))
+                findNavController().navigate(R.id.action_RecordFragment_to_SoundFragment)
             }
-
-
-
-
         }
-
-
-
-
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-
     }
 
 }
