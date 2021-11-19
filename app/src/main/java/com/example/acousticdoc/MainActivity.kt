@@ -29,6 +29,11 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
 
 
+        if(!RecordFragment.const.path.exists()){
+            RecordFragment.const.path.mkdirs()
+        }
+
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

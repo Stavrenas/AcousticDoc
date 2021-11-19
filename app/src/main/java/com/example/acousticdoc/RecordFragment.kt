@@ -37,7 +37,9 @@ class RecordFragment  : Fragment()  {
     var state =0
     val mRecorder = MediaRecorder()
 
-
+    object const{
+        val path  = File(Environment.getExternalStorageDirectory() ,"AcousticDoc")
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -76,9 +78,9 @@ class RecordFragment  : Fragment()  {
 
 
         binding.recording.setOnClickListener {
-            //var fileName = context?.getExternalFilesDir(null)?.absolutePath
-            var fileName = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).absolutePath
-            fileName +=  "/" + myEditText.text.toString()  + ".3gp"
+
+
+            val fileName = const.path.toString() +  "/" + myEditText.text.toString()  + ".3gp"
 
             if (state == 0){
 
