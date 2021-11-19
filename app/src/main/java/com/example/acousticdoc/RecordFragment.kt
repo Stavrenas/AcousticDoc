@@ -18,7 +18,9 @@ import android.widget.Toast
 
 import android.media.MediaRecorder
 import android.net.Uri
+import android.os.Build
 import android.os.Environment
+import androidx.annotation.RequiresApi
 import androidx.navigation.fragment.findNavController
 import java.io.File
 
@@ -46,6 +48,7 @@ class RecordFragment  : Fragment()  {
 
     }
 
+    @RequiresApi(Build.VERSION_CODES.S)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -73,8 +76,8 @@ class RecordFragment  : Fragment()  {
 
 
         binding.recording.setOnClickListener {
-            var fileName = context?.getExternalFilesDir(null)?.absolutePath
-
+            //var fileName = context?.getExternalFilesDir(null)?.absolutePath
+            var fileName = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).absolutePath
             fileName +=  "/" + myEditText.text.toString()  + ".3gp"
 
             if (state == 0){
