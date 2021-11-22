@@ -85,8 +85,10 @@ class RecordFragment  : Fragment()  {
             if (state == 0){
 
                 mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC)
-                mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
-                mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
+                mRecorder.setOutputFormat(MediaRecorder.OutputFormat.AAC_ADTS)
+                mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
+                mRecorder.setAudioSamplingRate(44100)
+                mRecorder.setAudioEncodingBitRate(16*44100)
                 mRecorder.setOutputFile(fileName)
 
                 mRecorder.prepare()
