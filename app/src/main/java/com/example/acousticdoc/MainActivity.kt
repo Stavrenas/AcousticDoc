@@ -29,8 +29,8 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
 
 
-        if(!RecordFragment.const.path.exists()){
-            RecordFragment.const.path.mkdirs()
+        if(!RecordFragment.Globals.path.exists()){
+            RecordFragment.Globals.path.mkdirs()
         }
 
 

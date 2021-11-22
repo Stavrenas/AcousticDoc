@@ -29,15 +29,13 @@ class RecordFragment  : Fragment()  {
 
 
     private var _binding: FragmentRecordBinding? = null
-
-    // This property is only valid between onCreateView and
-    // onDestroyView.
     private val binding get() = _binding!!
     private val sharedViewModel: ViewModel by activityViewModels()
+    private val recorder = MediaRecorder()
     var state =0
-    val mRecorder = MediaRecorder()
 
-    object const{
+
+    object Globals{
         val path  = File(Environment.getExternalStorageDirectory() ,"AcousticDoc")
     }
 
@@ -56,20 +54,12 @@ class RecordFragment  : Fragment()  {
 
         binding.recording.isEnabled = false
 
-        var myEditText = binding.input as EditText
+        val myEditText = binding.input as EditText
 
         myEditText.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable) {
-                if (myEditText.text.toString() == ""){
-                    binding.recording.isEnabled = false
-                }
-                else{
-                    binding.recording.isEnabled = true
-                }
-
-                // you can call or do what you want with your EditText here
-
-                // yourEditText...
+                //enabled only if string not empty
+                binding.recording.isEnabled = myEditText.text.toString() != ""
             }
 
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
@@ -80,32 +70,33 @@ class RecordFragment  : Fragment()  {
         binding.recording.setOnClickListener {
 
 
-            val fileName = const.path.toString() +  "/" + myEditText.text.toString()  + ".3gp"
+            val fileName = Globals.path.toString() +  "/" + myEditText.text.toString()  + ".3gp"
 
             if (state == 0){
+                //recorder setup
+                recorder.setAudioSource(MediaRecorder.AudioSource.MIC)
+                recorder.setOutputFormat(MediaRecorder.OutputFormat.AAC_ADTS)
+                recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
+                recorder.setAudioSamplingRate(44100)
+                recorder.setAudioEncodingBitRate(16*44100)
+                recorder.setOutputFile(fileName)
 
-                mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC)
-                mRecorder.setOutputFormat(MediaRecorder.OutputFormat.AAC_ADTS)
-                mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
-                mRecorder.setAudioSamplingRate(44100)
-                mRecorder.setAudioEncodingBitRate(16*44100)
-                mRecorder.setOutputFile(fileName)
-
-                mRecorder.prepare()
-                mRecorder.start()
+                recorder.prepare()
+                recorder.start()
 
                 binding.recording.setText(R.string.stop_recording)
                 binding.input.visibility =View.GONE
                 binding.textView2.visibility = View.GONE
                 binding.textView5.visibility = View.VISIBLE
-                Toast.makeText(context,"Started Recording", Toast.LENGTH_LONG)
+                Toast.makeText(context,"Started Recording", Toast.LENGTH_LONG).show()
 
                 state = 1
             }
             else if (state == 1){
+                //stop recording, save file and change fragment
                 binding.recording.isEnabled = false
-                mRecorder.stop();
-                mRecorder.release();
+                recorder.stop();
+                recorder.release();
                 sharedViewModel.setModelUri(Uri.fromFile(File(fileName)))
                 findNavController().navigate(R.id.action_RecordFragment_to_SoundFragment)
             }

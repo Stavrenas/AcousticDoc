@@ -24,9 +24,6 @@ import android.util.Log
 class SoundFragment : Fragment() {
 
     private var _binding: FragmentSoundBinding? = null
-
-    // This property is only valid between onCreateView and
-    // onDestroyView.
     private val binding get() = _binding!!
     private val sharedViewModel: ViewModel by activityViewModels()
     var playing = 1
@@ -59,12 +56,10 @@ class SoundFragment : Fragment() {
                     .setUsage(AudioAttributes.USAGE_MEDIA)
                     .build()
             )
-            setOnCompletionListener(
-                {
-                    if(playing == 0)
+            setOnCompletionListener {
+                if (playing == 0)
                     pauseMusic()
-                }
-            )
+            }
             if (myUri != null) {
                 context?.let { setDataSource(it, myUri) }
             }
@@ -74,18 +69,16 @@ class SoundFragment : Fragment() {
 
         binding.play.setOnClickListener {
             toggle()
-            //findNavController().navigate(R.id.action_SoundFragment_to_SelectFragment)
         }
 
         binding.diagnosis.setOnClickListener {
             pauseMusic()
 
             val selectedId: Int = binding.radioGroup.checkedRadioButtonId
-            val selected: String
-            if (selectedId == binding.cough.id)
-                 selected = "Cough"
+            val selected: String = if (selectedId == binding.cough.id)
+                "Cough"
             else
-                selected = "Breathing"
+                "Breathing"
             Toast.makeText(
                 context,
                 "$selected ",
