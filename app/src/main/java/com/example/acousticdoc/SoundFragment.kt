@@ -14,7 +14,6 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import android.media.MediaPlayer.OnCompletionListener
 import android.util.Log
 
 
@@ -26,8 +25,8 @@ class SoundFragment : Fragment() {
     private var _binding: FragmentSoundBinding? = null
     private val binding get() = _binding!!
     private val sharedViewModel: ViewModel by activityViewModels()
-    var playing = 1
-    var mediaPlayer = MediaPlayer()
+    private var playing = 1
+    private var mediaPlayer = MediaPlayer()
 
 
     override fun onCreateView(
@@ -112,18 +111,17 @@ class SoundFragment : Fragment() {
          Log.d("URI","URI $fullSoundUri")
      }
 
-    private fun Uri.getName(context: Context): String? {
+    private fun Uri.getName(context: Context): String {
         val returnCursor = context.contentResolver.query(this, null, null, null, null)
         val nameIndex = returnCursor?.getColumnIndex(OpenableColumns.DISPLAY_NAME)
         returnCursor?.moveToFirst()
-        val fileName = nameIndex?.let { returnCursor?.getString(it) }
+        val fileName = nameIndex?.let { returnCursor.getString(it) }
         returnCursor?.close()
-        if(fileName == null) {
-          val fullFileName = this.toString()
-            return fullFileName.substring(fullFileName.lastIndexOf("/") + 1, fullFileName.length);
-        }
-        else {
-            return fileName
+        return if(fileName == null) {
+            val fullFileName = this.toString()
+            fullFileName.substring(fullFileName.lastIndexOf("/") + 1, fullFileName.length)
+        } else {
+            fileName
         }
     }
 

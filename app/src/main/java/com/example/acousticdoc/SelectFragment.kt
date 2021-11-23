@@ -27,14 +27,13 @@ class SelectFragment : Fragment() {
     companion object {
         private const val REQUEST_SOUND_CAPTURE = 1000
         const val REQUEST_SOUND_OPEN = 1
-        const val CAPTURE_SOUND_REQUEST = 1
     }
 
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
 
         _binding = FragmentSelectBinding.inflate(inflater, container, false)
         return binding.root

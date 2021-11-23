@@ -32,7 +32,7 @@ class RecordFragment  : Fragment()  {
     private val binding get() = _binding!!
     private val sharedViewModel: ViewModel by activityViewModels()
     private val recorder = MediaRecorder()
-    var state =0
+    private var state =0
 
 
     object Globals{
@@ -95,8 +95,8 @@ class RecordFragment  : Fragment()  {
             else if (state == 1){
                 //stop recording, save file and change fragment
                 binding.recording.isEnabled = false
-                recorder.stop();
-                recorder.release();
+                recorder.stop()
+                recorder.release()
                 sharedViewModel.setModelUri(Uri.fromFile(File(fileName)))
                 findNavController().navigate(R.id.action_RecordFragment_to_SoundFragment)
             }
