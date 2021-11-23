@@ -4,11 +4,8 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import java.sql.Date
-import java.sql.Types.NULL
 
-/**
- * Represents one night's sleep through start, end times, and the sleep quality.
- */
+
 @Entity(tableName = "sound_history_table")
 data class SoundHistory(
     @PrimaryKey(autoGenerate = true)
