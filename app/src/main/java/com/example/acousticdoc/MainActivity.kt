@@ -2,19 +2,36 @@ package com.example.acousticdoc
 
 import AcousticDoc.R
 import AcousticDoc.databinding.ActivityMainBinding
+import android.Manifest
+import android.Manifest.*
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
+import androidx.activity.result.ActivityResultCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.result.contract.ActivityResultContracts.RequestMultiplePermissions
+
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
+    val PERMISSIONS = arrayOf(Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE)
+    private val requestMultiplePermissions =     registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+        permissions.entries.forEach {
+            Log.e("DEBUG", "${it.key} = ${it.value}")
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,7 +49,7 @@ class MainActivity : AppCompatActivity() {
         if(!RecordFragment.Globals.path.exists()){
             RecordFragment.Globals.path.mkdirs()
         }
-
+        requestMultiplePermissions.launch(PERMISSIONS)
 
     }
 
@@ -56,5 +73,24 @@ class MainActivity : AppCompatActivity() {
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         return navController.navigateUp(appBarConfiguration)
                 || super.onSupportNavigateUp()
+    }
+
+
+    private fun hasPermissions(permissions: Array<String>?): Boolean {
+        if (permissions != null) {
+            for (permission in permissions) {
+                if (ActivityCompat.checkSelfPermission(
+                        this,
+                        permission
+                    ) != PackageManager.PERMISSION_GRANTED
+                ) {
+                    Log.d("PERMISSIONS", "Permission is not granted: $permission")
+                    return false
+                }
+                Log.d("PERMISSIONS", "Permission already granted: $permission")
+            }
+            return true
+        }
+        return false
     }
 }
