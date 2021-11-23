@@ -22,4 +22,6 @@
     <string name="start_recording">Start Recording</string>
     <string name="stop_recording">Stop Recording</string>
     <string name="now_recording">Now Recording...</string>
+    <string name="about">About</string>
+    <string name="file_history">File History</string>
 </resources>

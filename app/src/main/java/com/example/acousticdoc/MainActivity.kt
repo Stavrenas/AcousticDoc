@@ -3,6 +3,7 @@ package com.example.acousticdoc
 import AcousticDoc.R
 import AcousticDoc.databinding.ActivityMainBinding
 import android.Manifest
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -12,6 +13,10 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.activity.result.contract.ActivityResultContracts
+import android.content.DialogInterface
+
+
+
 
 
 class MainActivity : AppCompatActivity() {
@@ -52,7 +57,16 @@ class MainActivity : AppCompatActivity() {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         return when (item.itemId) {
-            R.id.action_settings -> true
+            R.id.action_about -> {
+                AlertDialog.Builder(this)
+                    .setTitle("About us :)")
+                    .setMessage("This application is part of our project for the \"Technology of Sound\" course.\n Students:\nStavros Malakoudis samalako@[ECE]\nKaragkiozidis Nikolaos karagkio@[ECE]\nAggelou Andreas aangelou@[ECE]\nMpougias Nikolaos nmpougias@[ECE]\nTsakiridis Georgios tsakgeor@[ECE]\n[ECE]=ece.auth.gr")
+                    // The dialog is automatically dismissed when a dialog button is clicked.
+                    .setPositiveButton("Nice", null)
+                    .show()
+                true
+            }
+            R.id.action_history -> true
             else -> super.onOptionsItemSelected(item)
         }
     }
