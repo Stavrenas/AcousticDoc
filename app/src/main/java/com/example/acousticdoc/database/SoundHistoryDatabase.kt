@@ -13,12 +13,12 @@ import androidx.room.RoomDatabase
  * so you can reuse it.
  */
 @Database(entities = [SoundHistory::class], version = 1, exportSchema = false)
-abstract class HistoryDatabase : RoomDatabase() {
+abstract class SoundHistoryDatabase : RoomDatabase() {
 
     /**
      * Connects the database to the DAO.
      */
-    abstract val HistoryDatabaseDao: HistoryDatabaseDao
+    abstract val SoundHistoryDatabaseDao: SoundHistoryDatabaseDao
 
     /**
      * Define a companion object, this allows us to add functions on the SleepDatabase class.
@@ -37,7 +37,7 @@ abstract class HistoryDatabase : RoomDatabase() {
          *  thread to shared data are visible to other threads.
          */
         @Volatile
-        private var INSTANCE: HistoryDatabase? = null
+        private var INSTANCE: SoundHistoryDatabase? = null
 
         /**
          * Helper function to get the database.
@@ -56,7 +56,7 @@ abstract class HistoryDatabase : RoomDatabase() {
          *
          * @param context The application context Singleton, used to get access to the filesystem.
          */
-        fun getInstance(context: Context): HistoryDatabase {
+        fun getInstance(context: Context): SoundHistoryDatabase {
             // Multiple threads can ask for the database at the same time, ensure we only initialize
             // it once by using synchronized. Only one thread may enter a synchronized block at a
             // time.
@@ -70,7 +70,7 @@ abstract class HistoryDatabase : RoomDatabase() {
                 if (instance == null) {
                     instance = Room.databaseBuilder(
                         context.applicationContext,
-                        HistoryDatabase::class.java,
+                        SoundHistoryDatabase::class.java,
                         "sleep_history_database"
                     )
                         // Wipes and rebuilds instead of migrating if no Migration object.

@@ -13,7 +13,7 @@ import androidx.room.Update
  * Defines methods for using the SleepNight class with Room.
  */
 @Dao
-interface HistoryDatabaseDao{
+interface SoundHistoryDatabaseDao{
 
     @Insert
     suspend fun insert(history: SoundHistory)

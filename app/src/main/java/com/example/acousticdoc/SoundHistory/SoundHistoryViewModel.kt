@@ -2,12 +2,12 @@ package com.example.acousticdoc.SoundHistory
 
 import android.app.Application
 import androidx.lifecycle.*
-import com.example.acousticdoc.database.HistoryDatabaseDao
+import com.example.acousticdoc.database.SoundHistoryDatabaseDao
 import com.example.acousticdoc.database.SoundHistory
 import kotlinx.coroutines.launch
 
-class SoundHistoryViewModel ( dataSource: HistoryDatabaseDao,
-application: Application
+class SoundHistoryViewModel (dataSource: SoundHistoryDatabaseDao,
+                             application: Application
 ) : ViewModel() {
 
     /**
@@ -18,34 +18,13 @@ application: Application
 
     private var last = MutableLiveData<SoundHistory?>()
 
-    val nights = database.getAllHistory()
+    val all_history = database.getAllHistory()
 
     /**
      * Converted nights to Spanned for displaying.
      */
-    val nightsString = Transformations.map(nights) { nights ->
-        formatNights(nights, application.resources)
-    }
-
-    /**
-     * If tonight has not been set, then the START button should be visible.
-     */
-    val startButtonVisible = Transformations.map(last) {
-        null == it
-    }
-
-    /**
-     * If tonight has been set, then the STOP button should be visible.
-     */
-    val stopButtonVisible = Transformations.map(last) {
-        null != it
-    }
-
-    /**
-     * If there are any nights in the database, show the CLEAR button.
-     */
-    val clearButtonVisible = Transformations.map(nights) {
-        it?.isNotEmpty()
+    val historyString = Transformations.map(all_history) { all_history ->
+        formatAllHistory(all_history, application.resources)
     }
 
 
@@ -67,13 +46,13 @@ application: Application
      *
      * This is private because we don't want to expose setting this value to the Fragment.
      */
-    private val _navigateToSleepQuality = MutableLiveData<SoundHistory>()
+    private val _navigateToSoundHistory = MutableLiveData<SoundHistory>()
 
     /**
      * If this is non-null, immediately navigate to [SleepQualityFragment] and call [doneNavigating]
      */
-    val navigateToSleepQuality: LiveData<SoundHistory>
-    get() = _navigateToSleepQuality
+    val navigateToSoundHistory: LiveData<SoundHistory>
+    get() = _navigateToSoundHistory
 
     /**
      * Call this immediately after calling `show()` on a toast.
@@ -92,14 +71,14 @@ application: Application
      * twice.
      */
     fun doneNavigating() {
-        _navigateToSleepQuality.value = null
+        _navigateToSoundHistory.value = null
     }
 
     init {
-        initializeTonight()
+        initializeLast()
     }
 
-    private fun initializeTonight() {
+    private fun initializeLast() {
         viewModelScope.launch {
             last.value = getLastFromDatabase()
         }
@@ -113,11 +92,7 @@ application: Application
      *  recording.
      */
     private suspend fun getLastFromDatabase(): SoundHistory? {
-        var night = database.getLast()
-        if (night?.endTimeMilli != night?.startTimeMilli) {
-            night = null
-        }
-        return night
+        return database.getLast()
     }
 
     private suspend fun insert(history: SoundHistory) {
@@ -132,54 +107,54 @@ application: Application
         database.clear()
     }
 
-    /**
-     * Executes when the START button is clicked.
-     */
-    fun onStart() {
-        viewModelScope.launch {
-            // Create a new night, which captures the current time,
-            // and insert it into the database.
-            val newHistory = SoundHistory()
+//    /**
+//     * Executes when the START button is clicked.
+//     */
+//    fun onStart() {
+//        viewModelScope.launch {
+//            // Create a new night, which captures the current time,
+//            // and insert it into the database.
+//            val newHistory = SoundHistory()
+//
+//            insert(newHistory)
+//
+//            last.value = getLastFromDatabase()
+//        }
+//    }
 
-            insert(newHistory)
-
-            last.value = getTonightFromDatabase()
-        }
-    }
-
-    /**
-     * Executes when the STOP button is clicked.
-     */
-    fun onStop() {
-        viewModelScope.launch {
-            // In Kotlin, the return@label syntax is used for specifying which function among
-            // several nested ones this statement returns from.
-            // In this case, we are specifying to return from launch().
-            val oldNight = last.value ?: return@launch
-
-            // Update the night in the database to add the end time.
-            oldNight.endTimeMilli = System.currentTimeMillis()
-
-            update(oldNight)
-
-            // Set state to navigate to the SleepQualityFragment.
-            _navigateToSleepQuality.value = oldNight
-        }
-    }
-
-    /**
-     * Executes when the CLEAR button is clicked.
-     */
-    fun onClear() {
-        viewModelScope.launch {
-            // Clear the database table.
-            clear()
-
-            // And clear tonight since it's no longer in the database
-            last.value = null
-
-            // Show a snackbar message, because it's friendly.
-            _showSnackbarEvent.value = true
-        }
-    }
+//    /**
+//     * Executes when the STOP button is clicked.
+//     */
+//    fun onStop() {
+//        viewModelScope.launch {
+//            // In Kotlin, the return@label syntax is used for specifying which function among
+//            // several nested ones this statement returns from.
+//            // In this case, we are specifying to return from launch().
+//            val oldNight = last.value ?: return@launch
+//
+//            // Update the night in the database to add the end time.
+//            oldNight.endTimeMilli = System.currentTimeMillis()
+//
+//            update(oldNight)
+//
+//            // Set state to navigate to the SleepQualityFragment.
+//            _navigateToSleepQuality.value = oldNight
+//        }
+//    }
+//
+//    /**
+//     * Executes when the CLEAR button is clicked.
+//     */
+//    fun onClear() {
+//        viewModelScope.launch {
+//            // Clear the database table.
+//            clear()
+//
+//            // And clear tonight since it's no longer in the database
+//            last.value = null
+//
+//            // Show a snackbar message, because it's friendly.
+//            _showSnackbarEvent.value = true
+//        }
+//    }
 }
