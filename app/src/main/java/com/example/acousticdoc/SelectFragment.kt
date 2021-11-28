@@ -58,6 +58,9 @@ class SelectFragment : Fragment() {
                 Toast.LENGTH_SHORT
             ).show()
         }
+        binding.history.setOnClickListener {
+            findNavController().navigate(R.id.action_SelectFragment_to_SoundHistoryFragment)
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

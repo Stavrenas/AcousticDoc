@@ -66,7 +66,6 @@ class MainActivity : AppCompatActivity() {
                     .show()
                 true
             }
-            R.id.action_history -> true
             else -> super.onOptionsItemSelected(item)
         }
     }
