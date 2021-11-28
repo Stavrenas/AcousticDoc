@@ -1,9 +1,10 @@
-package com.example.acousticdoc.database
+package com.example.acousticdoc.SoundHistory
 
 import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.acousticdoc.SoundHistory.SoundHistoryViewModel
+import com.example.acousticdoc.database.SoundHistoryDatabaseDao
+
 /**
  * This is pretty much boiler plate code for a ViewModel Factory.
  *

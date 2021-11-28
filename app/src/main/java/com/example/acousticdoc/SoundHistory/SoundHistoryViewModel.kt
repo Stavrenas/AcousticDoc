@@ -15,7 +15,6 @@ class SoundHistoryViewModel (dataSource: SoundHistoryDatabaseDao,
      */
     val database = dataSource
 
-
     private var last = MutableLiveData<SoundHistory?>()
 
     val all_history = database.getAllHistory()
@@ -73,7 +72,7 @@ class SoundHistoryViewModel (dataSource: SoundHistoryDatabaseDao,
 
     private fun initializeLast() {
         viewModelScope.launch {
-            last.value = getLastFromDatabase()
+            //last.value = getLastFromDatabase()
         }
     }
 
@@ -84,21 +83,18 @@ class SoundHistoryViewModel (dataSource: SoundHistoryDatabaseDao,
      *  If the start time and end time are not the same, then we do not have an unfinished
      *  recording.
      */
-    private suspend fun getLastFromDatabase(): SoundHistory? {
+    private fun getLastFromDatabase(): SoundHistory? {
         return database.getLast()
     }
 
-    private suspend fun insert(history: SoundHistory) {
+    fun insert(history: SoundHistory) {
         database.insert(history)
     }
 
-    private suspend fun update(history: SoundHistory) {
+    private fun update(history: SoundHistory) {
         database.update(history)
     }
 
-    private suspend fun clear() {
-        database.clear()
-    }
 
 //    /**
 //     * Executes when the START button is clicked.

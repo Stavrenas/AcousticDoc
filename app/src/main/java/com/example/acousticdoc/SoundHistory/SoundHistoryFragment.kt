@@ -7,20 +7,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.findNavController
-import com.example.acousticdoc.ViewModel
+import com.example.acousticdoc.database.SoundHistory
 import com.example.acousticdoc.database.SoundHistoryDatabase
-import com.example.acousticdoc.database.SoundHistoryViewModelFactory
-import com.google.android.material.snackbar.Snackbar
 
 class SoundHistoryFragment : Fragment() {
 
     private var _binding: FragmentHistoryBinding? = null
     private val binding get() = _binding!!
-    private val soundHistoryViewModel: SoundHistoryViewModel by activityViewModels()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -31,7 +26,7 @@ class SoundHistoryFragment : Fragment() {
         val application = requireNotNull(this.activity).application
 
         // Create an instance of the ViewModel Factory.
-        val dataSource = SoundHistoryDatabase.getInstance(application).SoundHistoryDatabaseDao
+        val dataSource = SoundHistoryDatabase.getInstance(application).soundHistoryDatabaseDao
         val viewModelFactory = SoundHistoryViewModelFactory(dataSource, application)
 
         // Get a reference to the ViewModel associated with this fragment.
@@ -43,7 +38,7 @@ class SoundHistoryFragment : Fragment() {
         val adapter = SoundHistoryAdapter()
         binding.historyList.adapter = adapter
 
-        soundHistoryViewModel.all_history.observe(viewLifecycleOwner, Observer {
+        soundHistoryViewModel.all_history?.observe(viewLifecycleOwner, Observer {
             it?.let {
                 adapter.data = it
             }
@@ -51,5 +46,19 @@ class SoundHistoryFragment : Fragment() {
 
 
         return binding.root
+    }
+
+    fun add(hist: SoundHistory){
+        val application = requireNotNull(this.activity).application
+
+        // Create an instance of the ViewModel Factory.
+        val dataSource = SoundHistoryDatabase.getInstance(application).soundHistoryDatabaseDao
+        val viewModelFactory = SoundHistoryViewModelFactory(dataSource, application)
+
+        // Get a reference to the ViewModel associated with this fragment.
+        val soundHistoryViewModel =
+            ViewModelProvider(
+                this, viewModelFactory).get(SoundHistoryViewModel::class.java)
+        soundHistoryViewModel.insert(hist)
     }
 }

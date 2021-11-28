@@ -1,6 +1,5 @@
 package com.example.acousticdoc
 
-import AcousticDoc.R
 import AcousticDoc.databinding.FragmentSoundBinding
 import android.content.Context
 import android.media.AudioAttributes
@@ -15,6 +14,9 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import android.util.Log
+import com.example.acousticdoc.SoundHistory.SoundHistoryFragment
+import androidx.fragment.app.FragmentManager
+import com.example.acousticdoc.database.SoundHistory
 
 
 /**
@@ -74,17 +76,28 @@ class SoundFragment : Fragment() {
             pauseMusic()
 
             val selectedId: Int = binding.radioGroup.checkedRadioButtonId
-            val selected: String = if (selectedId == binding.cough.id)
-                "Cough"
-            else
-                "Breathing"
+            val selected: String
+
+            val fm: FragmentManager? = fragmentManager
+            val fragm: SoundHistoryFragment = fm?.findFragmentById(AcousticDoc.R.id.SoundHistoryFragment) as SoundHistoryFragment
+            var history = SoundHistory()
+
+
+            if (selectedId == binding.cough.id) {
+                 selected = "Cough"
+                history = SoundHistory(firstName = "Stavr", lastName = "Pip", diagnosis = "COV")
+                fragm.add(history,)
+            }
+            else {
+                selected = "Breathing"
+            }
+
             Toast.makeText(
                 context,
                 "$selected ",
                 Toast.LENGTH_SHORT
             ).show()
 
-            
 
         }
     }
@@ -101,13 +114,13 @@ class SoundFragment : Fragment() {
     private fun pauseMusic(){
         mediaPlayer.pause()
         playing = 1
-        binding.play.setText(R.string.play)
+        binding.play.setText(AcousticDoc.R.string.play)
     }
      private fun startMusic() {
          val fullSoundUri = sharedViewModel.getModelUri()
          mediaPlayer.start()
          playing = 0
-         binding.play.setText(R.string.pause)
+         binding.play.setText(AcousticDoc.R.string.pause)
          Log.d("URI","URI $fullSoundUri")
      }
 
@@ -123,6 +136,10 @@ class SoundFragment : Fragment() {
         } else {
             fileName
         }
+    }
+
+    fun launchDialog(): String{
+return ""
     }
 
 

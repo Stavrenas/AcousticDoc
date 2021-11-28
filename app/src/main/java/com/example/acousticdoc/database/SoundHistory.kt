@@ -12,7 +12,7 @@ data class SoundHistory(
     var historyID: Long = 0L,
 
     @ColumnInfo(name = "date")
-    val date: Date = Date(2020,1,1),
+    var date: Long = 0L,
 
     @ColumnInfo(name = "name")
     var firstName: String = "",

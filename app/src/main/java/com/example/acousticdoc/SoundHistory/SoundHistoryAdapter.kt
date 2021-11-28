@@ -1,6 +1,5 @@
 package com.example.acousticdoc.SoundHistory
 
-import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,12 +7,6 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.acousticdoc.SoundHistory.SoundHistoryAdapter.ViewHolder.Companion.from
 import com.example.acousticdoc.database.SoundHistory
-import java.text.SimpleDateFormat
-
-import android.R
-import androidx.fragment.app.activityViewModels
-import com.example.acousticdoc.ViewModel
-import java.security.AccessController.getContext
 
 
 class SoundHistoryAdapter: RecyclerView.Adapter<SoundHistoryAdapter.ViewHolder>() {
@@ -47,7 +40,8 @@ class SoundHistoryAdapter: RecyclerView.Adapter<SoundHistoryAdapter.ViewHolder>(
             val res = itemView.context.resources
             fullName.text = item.firstName +" "+ item.lastName
             fileName.text = item.fileName
-            date.text = item.date.toString()
+            date.text = getDateFromInt(item.date)
+            diagnosis.text = item.diagnosis
 
         }
 
@@ -60,10 +54,12 @@ class SoundHistoryAdapter: RecyclerView.Adapter<SoundHistoryAdapter.ViewHolder>(
                 return ViewHolder(view)
             }
         }
+        fun getDateFromInt(date: Long): String {
+            val str = date.toString()
+            return "" + str[0] + str[1] + "/" + str[2] + str[3] + "/" + str[4] + str[5] + str[6] + str[7] +
+                    "-" + str[8] + str[9] + ":" + str[10] + str[11]
+        }
     }
-    @SuppressLint("SimpleDateFormat")
-    fun convertLongToDateString(systemTime: Long): String {
-        return SimpleDateFormat("EEEE MMM-dd-yyyy' Time: 'HH:mm")
-            .format(systemTime).toString()
-    }
+
+
 }

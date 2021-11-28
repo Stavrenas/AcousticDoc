@@ -18,7 +18,7 @@ abstract class SoundHistoryDatabase : RoomDatabase() {
     /**
      * Connects the database to the DAO.
      */
-    abstract val SoundHistoryDatabaseDao: SoundHistoryDatabaseDao
+    abstract val soundHistoryDatabaseDao: SoundHistoryDatabaseDao
 
     /**
      * Define a companion object, this allows us to add functions on the SoundHistoryDatabase class.

@@ -16,7 +16,7 @@ import androidx.room.Update
 interface SoundHistoryDatabaseDao{
 
     @Insert
-    suspend fun insert(history: SoundHistory)
+    fun insert(history: SoundHistory)
 
     /**
      * When updating a row with a value already set in a column,
@@ -25,23 +25,23 @@ interface SoundHistoryDatabaseDao{
      *
      */
     @Update
-    suspend fun update(history: SoundHistory)
+    fun update(history: SoundHistory)
 
     /**
-     * Selects and returns the row that matches the supplied start time, which is our key.
+     * Selects and returns the row that matches the supplied key.
      *
      * @param key startTimeMilli to match
      */
     @Query("SELECT * from sound_history_table WHERE historyID = :key")
-    suspend fun get(key: Long): SoundHistory
+    fun get(key: Long): SoundHistory
 
-    /**
-     * Deletes all values from the table.
-     *
-     * This does not delete the table, only its contents.
-     */
-    @Query("DELETE FROM sound_history_table")
-    suspend fun clear()
+//    /**
+//     * Deletes all values from the table.
+//     *
+//     * This does not delete the table, only its contents.
+//     */
+//    @Query("DELETE FROM sound_history_table")
+//    suspend fun clear()
 
     /**
      * Selects and returns all rows in the table,
@@ -49,11 +49,11 @@ interface SoundHistoryDatabaseDao{
      * sorted by start time in descending order.
      */
     @Query("SELECT * FROM sound_history_table ORDER BY historyID DESC")
-    fun getAllHistory(): LiveData<List<SoundHistory>>
+    fun getAllHistory(): LiveData<List<SoundHistory>>?
 
     /**
      * Selects and returns the latest night.
      */
     @Query("SELECT * FROM sound_history_table ORDER BY historyID DESC LIMIT 1")
-    suspend fun getLast(): SoundHistory?
+    fun getLast(): SoundHistory?
 }
