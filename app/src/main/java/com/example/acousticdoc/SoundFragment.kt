@@ -70,7 +70,7 @@ class SoundFragment : Fragment() {
             toggle()
         }
 
-        binding.diagnosis.setOnClickListener {
+        binding.Diagnosis.setOnClickListener {
             pauseMusic()
 
             val selectedId: Int = binding.radioGroup.checkedRadioButtonId

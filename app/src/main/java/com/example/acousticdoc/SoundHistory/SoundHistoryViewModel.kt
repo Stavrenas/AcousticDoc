@@ -20,13 +20,6 @@ class SoundHistoryViewModel (dataSource: SoundHistoryDatabaseDao,
 
     val all_history = database.getAllHistory()
 
-    /**
-     * Converted nights to Spanned for displaying.
-     */
-    val historyString = Transformations.map(all_history) { all_history ->
-        formatAllHistory(all_history, application.resources)
-    }
-
 
     /**
      * Request a toast by setting this value to true.

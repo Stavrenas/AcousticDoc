@@ -21,4 +21,7 @@ data class SoundHistory(
     var lastName: String = "",
 
     @ColumnInfo(name = "diagnosis")
-    var diagnosis: String = "")
+    var diagnosis: String = "",
+
+    @ColumnInfo(name = "fileName")
+    var fileName: String = "")

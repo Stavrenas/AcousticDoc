@@ -6,7 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 
 /**
- * A database that stores SleepNight information.
+ * A database that stores SoundHistory information.
  * And a global method to get access to the database.
  *
  * This pattern is pretty much the same for any database,
@@ -21,10 +21,10 @@ abstract class SoundHistoryDatabase : RoomDatabase() {
     abstract val SoundHistoryDatabaseDao: SoundHistoryDatabaseDao
 
     /**
-     * Define a companion object, this allows us to add functions on the SleepDatabase class.
+     * Define a companion object, this allows us to add functions on the SoundHistoryDatabase class.
      *
-     * For example, clients can call `SleepDatabase.getInstance(context)` to instantiate
-     * a new SleepDatabase.
+     * For example, clients can call `SoundHistoryDatabase.getInstance(context)` to instantiate
+     * a new SoundHistoryDatabase.
      */
     companion object {
         /**
@@ -71,7 +71,7 @@ abstract class SoundHistoryDatabase : RoomDatabase() {
                     instance = Room.databaseBuilder(
                         context.applicationContext,
                         SoundHistoryDatabase::class.java,
-                        "sleep_history_database"
+                        "sound_history_database"
                     )
                         // Wipes and rebuilds instead of migrating if no Migration object.
                         // Migration is not part of this lesson. You can learn more about

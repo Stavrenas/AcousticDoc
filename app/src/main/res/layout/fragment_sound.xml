@@ -54,7 +54,7 @@
         tools:text="SoundFileTitle" />
 
     <TextView
-        android:id="@+id/textView3"
+        android:id="@+id/soundType"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="15dp"
@@ -79,8 +79,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/textView3"
-        app:layout_constraintTop_toTopOf="@+id/textView3"
+        app:layout_constraintStart_toEndOf="@+id/soundType"
+        app:layout_constraintTop_toTopOf="@+id/soundType"
         app:layout_constraintVertical_bias="0.0">
 
         <RadioButton
@@ -99,7 +99,7 @@
     </RadioGroup>
 
     <Button
-        android:id="@+id/diagnosis"
+        android:id="@+id/Diagnosis"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
@@ -111,7 +111,7 @@
         app:layout_constraintTop_toBottomOf="@+id/radioGroup" />
 
     <TextView
-        android:id="@+id/textView4"
+        android:id="@+id/logo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"

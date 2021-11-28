@@ -11,8 +11,7 @@
     <string name="title">The title of the chosen file is</string>
     <string name="type">Type of sound</string>
 
-    <string name="sound_select">Select or add a new sound file</string>
-    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="sound_select">Select a file from storage or history. Add a new sound file via the "+" button</string>
     <string name="record_sound">Record sound</string>
     <string name="diagnosis">Diagnosis</string>
     <string name="breathing">Breathing</string>

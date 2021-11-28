@@ -7,7 +7,7 @@ import com.example.acousticdoc.SoundHistory.SoundHistoryViewModel
 /**
  * This is pretty much boiler plate code for a ViewModel Factory.
  *
- * Provides the SleepDatabaseDao and context to the ViewModel.
+ * Provides the SoundHistoryDatabaseDao and context to the ViewModel.
  */
 class SoundHistoryViewModelFactory(
     private val dataSource: SoundHistoryDatabaseDao,
