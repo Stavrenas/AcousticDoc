@@ -4,6 +4,7 @@ import AcousticDoc.R
 import AcousticDoc.databinding.ActivityMainBinding
 import android.Manifest
 import android.app.AlertDialog
+import android.content.ContextWrapper
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -14,9 +15,10 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.activity.result.contract.ActivityResultContracts
 import android.content.DialogInterface
-
-
-
+import android.os.Build
+import android.os.Environment
+import androidx.annotation.RequiresApi
+import java.io.File
 
 
 class MainActivity : AppCompatActivity() {
@@ -26,6 +28,7 @@ class MainActivity : AppCompatActivity() {
     private val perms = arrayOf(Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE)
     private val requestMultiplePermissions =  registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {}
 
+    @RequiresApi(Build.VERSION_CODES.S)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -38,9 +41,11 @@ class MainActivity : AppCompatActivity() {
         appBarConfiguration = AppBarConfiguration(navController.graph)
         setupActionBarWithNavController(navController, appBarConfiguration)
 
+        val cw = ContextWrapper(this)
+        val path = File(cw.getExternalFilesDir(null),"AcousticDoc")
 
-        if(!RecordFragment.Globals.path.exists()){
-            RecordFragment.Globals.path.mkdirs()
+        if(!path.exists()){
+            path.mkdirs()
         }
         requestMultiplePermissions.launch(perms)
 

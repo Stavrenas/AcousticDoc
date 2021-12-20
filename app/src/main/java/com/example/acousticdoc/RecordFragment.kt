@@ -3,6 +3,7 @@ package com.example.acousticdoc
 import AcousticDoc.databinding.FragmentRecordBinding
 import android.os.Bundle
 import AcousticDoc.R
+import android.content.ContextWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -35,10 +36,6 @@ class RecordFragment  : Fragment()  {
     private var state =0
 
 
-    object Globals{
-        val path  = File(Environment.getExternalStorageDirectory() ,"AcousticDoc")
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -70,7 +67,7 @@ class RecordFragment  : Fragment()  {
         binding.recording.setOnClickListener {
 
 
-            val fileName = Globals.path.toString() +  "/" + myEditText.text.toString()  + ".3gp"
+            val fileName = getFilePath().toString() +  "/" + myEditText.text.toString()  + ".3gp"
 
             if (state == 0){
                 //recorder setup
@@ -106,6 +103,12 @@ class RecordFragment  : Fragment()  {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    @RequiresApi(Build.VERSION_CODES.S)
+    fun getFilePath(): File{
+        val cw = ContextWrapper(activity)
+       return File(cw.getExternalFilesDir(null),"AcousticDoc")
     }
 
 }
