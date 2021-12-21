@@ -106,9 +106,9 @@ class RecordFragment  : Fragment()  {
     }
 
     @RequiresApi(Build.VERSION_CODES.S)
-    fun getFilePath(): File{
+    fun getFilePath(): File? {
         val cw = ContextWrapper(activity)
-       return File(cw.getExternalFilesDir(null),"AcousticDoc")
+       return cw.getExternalFilesDir(null)
     }
 
 }

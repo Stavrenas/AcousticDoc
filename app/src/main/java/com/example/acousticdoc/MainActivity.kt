@@ -42,10 +42,12 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
 
         val cw = ContextWrapper(this)
-        val path = File(cw.getExternalFilesDir(null),"AcousticDoc")
+        val path = cw.getExternalFilesDir(null)
 
-        if(!path.exists()){
-            path.mkdirs()
+        if (path != null) {
+            if(!path.exists()){
+                path.mkdirs()
+            }
         }
         requestMultiplePermissions.launch(perms)
 

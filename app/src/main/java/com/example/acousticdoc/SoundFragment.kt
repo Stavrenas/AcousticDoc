@@ -1,5 +1,6 @@
 package com.example.acousticdoc
 
+import AcousticDoc.R
 import AcousticDoc.databinding.FragmentSoundBinding
 import android.content.Context
 import android.media.AudioAttributes
@@ -79,14 +80,13 @@ class SoundFragment : Fragment() {
             val selected: String
 
             val fm: FragmentManager? = fragmentManager
-            val fragm: SoundHistoryFragment = fm?.findFragmentById(AcousticDoc.R.id.SoundHistoryFragment) as SoundHistoryFragment
-            var history = SoundHistory()
-
 
             if (selectedId == binding.cough.id) {
-                 selected = "Cough"
-                history = SoundHistory(firstName = "Stavr", lastName = "Pip", diagnosis = "COV")
-                fragm.add(history,)
+                selected = "Cough"
+                 var history = SoundHistory(firstName = "Stavr", lastName = "Pip", diagnosis = "COV")
+                (fm?.findFragmentById(R.id.SoundHistoryFragment) as? SoundHistoryFragment)?.add(
+                    history
+                )
             }
             else {
                 selected = "Breathing"

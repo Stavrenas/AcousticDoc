@@ -20,51 +20,6 @@ class SoundHistoryViewModel (dataSource: SoundHistoryDatabaseDao,
     val all_history = database.getAllHistory()
 
 
-    /**
-     * Request a toast by setting this value to true.
-     *
-     * This is private because we don't want to expose setting this value to the Fragment.
-     */
-    private var _showSnackbarEvent = MutableLiveData<Boolean?>()
-
-    /**
-     * If this is true, immediately `show()` a toast and call `doneShowingSnackbar()`.
-     */
-    val showSnackBarEvent: LiveData<Boolean?>
-    get() = _showSnackbarEvent
-
-    /**
-     * Variable that tells the Fragment to navigate to a specific [SleepQualityFragment]
-     *
-     * This is private because we don't want to expose setting this value to the Fragment.
-     */
-    private val _navigateToSoundHistory = MutableLiveData<SoundHistory>()
-
-    /**
-     * If this is non-null, immediately navigate to [SleepQualityFragment] and call [doneNavigating]
-     */
-    val navigateToSoundHistory: LiveData<SoundHistory>
-    get() = _navigateToSoundHistory
-
-    /**
-     * Call this immediately after calling `show()` on a toast.
-     *
-     * It will clear the toast request, so if the user rotates their phone it won't show a duplicate
-     * toast.
-     */
-    fun doneShowingSnackbar() {
-        _showSnackbarEvent.value = null
-    }
-
-    /**
-     * Call this immediately after navigating to [SleepQualityFragment]
-     *
-     * It will clear the navigation request, so if the user rotates their phone it won't navigate
-     * twice.
-     */
-    fun doneNavigating() {
-        _navigateToSoundHistory.value = null
-    }
 
     init {
         initializeLast()
@@ -76,13 +31,6 @@ class SoundHistoryViewModel (dataSource: SoundHistoryDatabaseDao,
         }
     }
 
-    /**
-     *  Handling the case of the stopped app or forgotten recording,
-     *  the start and end times will be the same.
-     *
-     *  If the start time and end time are not the same, then we do not have an unfinished
-     *  recording.
-     */
     private fun getLastFromDatabase(): SoundHistory? {
         return database.getLast()
     }
