@@ -33,6 +33,7 @@ class RecordFragment  : Fragment()  {
     private val binding get() = _binding!!
     private val sharedViewModel: ViewModel by activityViewModels()
     private val recorder = MediaRecorder()
+    private lateinit var mRecorder : WavAudioRecorder
     private var state =0
 
 
@@ -67,19 +68,25 @@ class RecordFragment  : Fragment()  {
         binding.recording.setOnClickListener {
 
 
-            val fileName = getFilePath().toString() +  "/" + myEditText.text.toString()  + ".3gp"
+            val fileName = getFilePath().toString() +  "/" + myEditText.text.toString()  + ".wav"
 
             if (state == 0){
                 //recorder setup
-                recorder.setAudioSource(MediaRecorder.AudioSource.MIC)
-                recorder.setOutputFormat(MediaRecorder.OutputFormat.AAC_ADTS)
-                recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
-                recorder.setAudioSamplingRate(44100)
-                recorder.setAudioEncodingBitRate(16*44100)
-                recorder.setOutputFile(fileName)
+//                recorder.setAudioSource(MediaRecorder.AudioSource.MIC)
+//                recorder.setOutputFormat(MediaRecorder.OutputFormat.AAC_ADTS)
+//                recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
+//                recorder.setAudioSamplingRate(44100)
+//                recorder.setAudioEncodingBitRate(16*44100)
+//                recorder.setOutputFile(fileName)
+//
+//                recorder.prepare()
+//                recorder.start()
 
-                recorder.prepare()
-                recorder.start()
+                mRecorder = WavAudioRecorder.getInstanse();
+                mRecorder.setOutputFile(fileName);
+                mRecorder.prepare();
+                mRecorder.start();
+
 
                 binding.recording.setText(R.string.stop_recording)
                 binding.input.visibility =View.GONE
@@ -91,9 +98,12 @@ class RecordFragment  : Fragment()  {
             }
             else if (state == 1){
                 //stop recording, save file and change fragment
-                binding.recording.isEnabled = false
-                recorder.stop()
-                recorder.release()
+                    binding.recording.isEnabled = false
+                //recorder.stop()
+                //recorder.release()
+
+                mRecorder.stop();
+                mRecorder.reset();
                 sharedViewModel.setModelUri(Uri.fromFile(File(fileName)))
                 findNavController().navigate(R.id.action_RecordFragment_to_SoundFragment)
             }

@@ -1,26 +1,30 @@
 <resources>
     <string name="app_name">AcousticDoc</string>
-    <string name="action_settings">Settings</string>
-    <!-- Strings used for fragments for navigation -->
-    <string name="select_fragment_label">Sound Selection</string>
-    <string name="sound_fragment_label">Diagnosis</string>
-    <string name="record_fragment_label">Record</string>
-    <string name="select">Select File</string>
-    <string name="play">Play</string>
-    <string name="pause">Pause</string>
-    <string name="title">The title of the chosen file is</string>
-    <string name="type">Type of sound</string>
+    <string name="action_settings">Ρυθμίσεις</string>
+    <string name="sound_fragment_label">Διάγνωση</string>
+    <string name="record_fragment_label">Ηχογράφηση</string>
+    <string name="select">Επιλογή Αρχείου</string>
+    <string name="play">Αναπαραγωγή</string>
+    <string name="pause">Πάυση</string>
+    <string name="title">Ο τίτλος του αρχείου είναι</string>
+    <string name="type">Τύπος ήχου</string>
+    <string name="sound_select">Επιλέξτε αρχείο από το χώρο αποθήκευσης. Ηχογραφήστε με το κουμπί +</string>
+    <string name="record_sound">Ηχογράφηση</string>
+    <string name="diagnosis">Διάγνωση</string>
+    <string name="breathing">Αναπνοή</string>
+    <string name="cough">Βήχας</string>
+    <string name="name_input">Πληκτρολογήστε το όνομα του αρχείου.</string>
+    <string name="file_name">Όνομα Αρχείου</string>
+    <string name="start_recording">Εκκίνηση ηχογράφησης</string>
+    <string name="stop_recording">Παύση ηχογράφησης</string>
+    <string name="now_recording">Γίνεται ηχογράφηση…</string>
+    <string name="about">Σχετικά</string>
+    <string name="file_history">Ιστορικό διαγνώσεων</string>
+    <string name="select_fragment_label">Επιλογή αρχείου</string>
+    <string name="results">Το αποτέλεσμα της διάγνωσης είναι</string>
+    <string name="healthy">Υγιές</string>
+    <string name="unhealthy">Μη υγιές</string>
+    <string name="probabilty">Η πιθανότητα νόσησης είναι </string>
 
-    <string name="sound_select">Select a file from storage or history. Add a new sound file via the "+" button</string>
-    <string name="record_sound">Record sound</string>
-    <string name="diagnosis">Diagnosis</string>
-    <string name="breathing">Breathing</string>
-    <string name="cough">Cough</string>
-    <string name="name_input">Type the desired file name.</string>
-    <string name="file_name">File Name</string>
-    <string name="start_recording">Start Recording</string>
-    <string name="stop_recording">Stop Recording</string>
-    <string name="now_recording">Now Recording...</string>
-    <string name="about">About</string>
-    <string name="file_history">File History</string>
+
 </resources>

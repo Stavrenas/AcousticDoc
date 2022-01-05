@@ -2,6 +2,7 @@ package com.example.acousticdoc
 
 import AcousticDoc.R
 import AcousticDoc.databinding.FragmentSoundBinding
+import AcousticDoc.ml.Model
 import android.content.Context
 import android.media.AudioAttributes
 import android.media.MediaPlayer
@@ -17,7 +18,16 @@ import androidx.fragment.app.activityViewModels
 import android.util.Log
 import com.example.acousticdoc.SoundHistory.SoundHistoryFragment
 import androidx.fragment.app.FragmentManager
+import androidx.navigation.fragment.findNavController
 import com.example.acousticdoc.database.SoundHistory
+import org.tensorflow.lite.DataType
+import org.tensorflow.lite.support.label.TensorLabel
+import org.tensorflow.lite.support.tensorbuffer.TensorBuffer
+import java.nio.ByteBuffer
+import java.nio.ByteBuffer.allocate
+import org.tensorflow.lite.support.common.TensorProcessor;
+import org.tensorflow.lite.support.common.ops.NormalizeOp;
+import kotlin.random.Random
 
 
 /**
@@ -50,6 +60,8 @@ class SoundFragment : Fragment() {
         }
         val myUri: Uri? = sharedViewModel.getModelUri()
 
+
+
         //initialize player
         mediaPlayer = MediaPlayer().apply {
             setAudioAttributes(
@@ -77,26 +89,53 @@ class SoundFragment : Fragment() {
             pauseMusic()
 
             val selectedId: Int = binding.radioGroup.checkedRadioButtonId
-            val selected: String
-
-            val fm: FragmentManager? = fragmentManager
+            var selected: String
 
             if (selectedId == binding.cough.id) {
                 selected = "Cough"
-                 var history = SoundHistory(firstName = "Stavr", lastName = "Pip", diagnosis = "COV")
-                (fm?.findFragmentById(R.id.SoundHistoryFragment) as? SoundHistoryFragment)?.add(
-                    history
-                )
+                 val history = SoundHistory(firstName = "Stavr", lastName = "Pip", diagnosis = "COV")
+
             }
             else {
                 selected = "Breathing"
             }
 
-            Toast.makeText(
-                context,
-                "$selected ",
-                Toast.LENGTH_SHORT
-            ).show()
+            val model = context?.let { Model.newInstance(it) }
+
+            // Creates inputs for reference.
+            val inputFeature0 = TensorBuffer.createFixedSize(intArrayOf(1, 27), DataType.FLOAT32)
+            val byteBuffer = inputFeature0.buffer
+
+
+            for (i in 1..27){
+                val rand: Float = Random.nextFloat()
+                byteBuffer.putFloat(rand)
+            }
+            inputFeature0.loadBuffer(byteBuffer)
+
+
+
+            val outputs =model?.process(inputFeature0)
+            // getting the output
+            val outputBuffer = outputs?.outputFeature0AsTensorBuffer
+
+            // adding labels to the output
+            val tensorLabel =
+                outputBuffer?.let { it1 -> TensorLabel(arrayListOf("Healthy", "Not Healthy"), it1) }
+
+            // getting the first label (hot dog) probability
+            // if 80 (you can change that) then we are pretty sure it is a hotdog -> update UI
+            val probability = tensorLabel?.mapWithFloatValue?.get("Healthy")
+            if (probability != null) {
+                sharedViewModel.setProbabilty(probability)
+            }
+
+
+            findNavController().navigate(R.id.action_SoundFragment_to_ResultFragment)
+
+            // Releases model resources if no longer used.
+            model?.close()
+
 
 
         }
@@ -137,11 +176,6 @@ class SoundFragment : Fragment() {
             fileName
         }
     }
-
-    fun launchDialog(): String{
-return ""
-    }
-
 
 
     override fun onDestroyView() {

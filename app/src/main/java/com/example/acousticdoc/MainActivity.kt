@@ -66,10 +66,10 @@ class MainActivity : AppCompatActivity() {
         return when (item.itemId) {
             R.id.action_about -> {
                 AlertDialog.Builder(this)
-                    .setTitle("About us :)")
-                    .setMessage("This application is part of our project for the \"Technology of Sound\" course.\n Students:\nStavros Malakoudis samalako@[ECE]\nKaragkiozidis Nikolaos karagkio@[ECE]\nAggelou Andreas aangelou@[ECE]\nMpougias Nikolaos nmpougias@[ECE]\nTsakiridis Georgios tsakgeor@[ECE]\n[ECE]=ece.auth.gr")
+                    .setTitle("Σχετικά με μας :)")
+                    .setMessage("Αυτή η εφαρμογή είναι κομμάτι της εργασίας μας στο μάθημα \"Τεχνολογία Ήχου και Εικόνας\" .\nΦοιτητές :\nΣταύρος Μαλακούδης samalako@[ECE]\nΚαραγκιοζίδης Νίκος karagkio@[ECE]\nΑγγέλου Ανδρέας aangelou@[ECE]\nΜπούγιας Νίκος nmpougias@[ECE]\nΤσακιρίδης Γιώργος tsakgeor@[ECE]\n[ECE]=ece.auth.gr")
                     // The dialog is automatically dismissed when a dialog button is clicked.
-                    .setPositiveButton("Nice", null)
+                    .setPositiveButton("Τέλεια!", null)
                     .show()
                 true
             }

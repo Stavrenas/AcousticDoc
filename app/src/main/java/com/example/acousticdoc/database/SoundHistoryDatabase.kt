@@ -13,12 +13,12 @@ import androidx.room.RoomDatabase
  * so you can reuse it.
  */
 @Database(entities = [SoundHistory::class], version = 1, exportSchema = false)
-abstract class SoundHistoryDatabase : RoomDatabase() {
+public abstract class SoundHistoryDatabase : RoomDatabase() {
 
     /**
      * Connects the database to the DAO.
      */
-    abstract val soundHistoryDatabaseDao: SoundHistoryDatabaseDao
+    abstract fun soundHistoryDatabaseDao(): SoundHistoryDatabaseDao
 
     /**
      * Define a companion object, this allows us to add functions on the SoundHistoryDatabase class.
@@ -85,6 +85,21 @@ abstract class SoundHistoryDatabase : RoomDatabase() {
 
                 // Return instance; smart cast to be non-null.
                 return instance
+            }
+        }
+
+        fun getDatabase(context: Context): SoundHistoryDatabase {
+            // if the INSTANCE is not null, then return it,
+            // if it is, then create the database
+            return INSTANCE ?: synchronized(this) {
+                val instance = Room.databaseBuilder(
+                    context.applicationContext,
+                    SoundHistoryDatabase::class.java,
+                    "sound_history_database"
+                ).build()
+                INSTANCE = instance
+                // return instance
+                instance
             }
         }
     }
