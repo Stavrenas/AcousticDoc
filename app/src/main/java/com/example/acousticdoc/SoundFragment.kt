@@ -9,6 +9,7 @@ import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
 import android.provider.OpenableColumns
+import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,6 +28,7 @@ import java.nio.ByteBuffer
 import java.nio.ByteBuffer.allocate
 import org.tensorflow.lite.support.common.TensorProcessor;
 import org.tensorflow.lite.support.common.ops.NormalizeOp;
+import java.net.URLDecoder.decode
 import kotlin.random.Random
 
 
@@ -56,7 +58,7 @@ class SoundFragment : Fragment() {
         val fullSoundUri = sharedViewModel.getModelUri()
 
         if (fullSoundUri != null) {
-            binding.soundTitle.setText(context?.let { fullSoundUri.getName(it) })
+            binding.soundTitle.setText(context?.let { decode(fullSoundUri.getName(it)) })
         }
         val myUri: Uri? = sharedViewModel.getModelUri()
 
