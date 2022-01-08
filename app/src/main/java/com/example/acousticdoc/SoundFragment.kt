@@ -4,7 +4,6 @@ import AcousticDoc.R
 import AcousticDoc.databinding.FragmentSoundBinding
 import AcousticDoc.ml.Model
 import android.content.Context
-import android.graphics.BitmapFactory
 import android.media.AudioAttributes
 import android.media.MediaPlayer
 import android.net.Uri
@@ -17,26 +16,14 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import android.util.Log
-import android.view.inputmethod.InputMethodManager
-import android.widget.EditText
-import android.widget.ImageView
-import com.example.acousticdoc.SoundHistory.SoundHistoryFragment
-import androidx.fragment.app.FragmentManager
 import androidx.navigation.fragment.findNavController
 import com.chaquo.python.PyException
 import com.chaquo.python.Python
-import com.example.acousticdoc.database.SoundHistory
 import org.tensorflow.lite.DataType
 import org.tensorflow.lite.support.label.TensorLabel
 import org.tensorflow.lite.support.tensorbuffer.TensorBuffer
-import java.nio.ByteBuffer
-import java.nio.ByteBuffer.allocate
-import org.tensorflow.lite.support.common.TensorProcessor;
-import org.tensorflow.lite.support.common.ops.NormalizeOp;
 import java.net.URLDecoder.decode
-import kotlin.random.Random
-import com.chaquo.python.android.AndroidPlatform
-import java.nio.ByteBuffer.wrap
+
 
 
 /**
@@ -65,7 +52,7 @@ class SoundFragment : Fragment() {
         val fullSoundUri = sharedViewModel.getModelUri()
 
         if (fullSoundUri != null) {
-            binding.soundTitle.setText(context?.let { decode(fullSoundUri.getName(it)) })
+            binding.soundTitle.text = context?.let { decode(fullSoundUri.getName(it)) }
         }
         val myUri: Uri? = sharedViewModel.getModelUri()
 
@@ -97,17 +84,17 @@ class SoundFragment : Fragment() {
         binding.Diagnosis.setOnClickListener {
             pauseMusic()
 
-            val selectedId: Int = binding.radioGroup.checkedRadioButtonId
-            var selected: String
-
-            if (selectedId == binding.cough.id) {
-                selected = "Cough"
-                 val history = SoundHistory(firstName = "Stavr", lastName = "Pip", diagnosis = "COV")
-
-            }
-            else {
-                selected = "Breathing"
-            }
+//            val selectedId: Int = binding.radioGroup.checkedRadioButtonId
+//            var selected: String
+//
+//            if (selectedId == binding.cough.id) {
+//                selected = "Cough"
+//                 val history = SoundHistory(firstName = "Stavr", lastName = "Pip", diagnosis = "COV")
+//
+//            }
+//            else {
+//                selected = "Breathing"
+//            }
 
             val model = context?.let { Model.newInstance(it) }
 
@@ -151,8 +138,8 @@ class SoundFragment : Fragment() {
             val tensorLabel =
                 outputBuffer?.let { it1 -> TensorLabel(arrayListOf("Healthy", "Not Healthy"), it1) }
 
-            // getting the first label (hot dog) probability
-            // if 80 (you can change that) then we are pretty sure it is a hotdog -> update UI
+            // getting the first label (Healthy) probability
+            // if 80 (you can change that) then we are pretty sure it is  Healthy -> update UI
             val probability = tensorLabel?.mapWithFloatValue?.get("Healthy")
             if (probability != null) {
                 sharedViewModel.setProbabilty(probability)
@@ -181,13 +168,13 @@ class SoundFragment : Fragment() {
     private fun pauseMusic(){
         mediaPlayer.pause()
         playing = 1
-        binding.play.setText(AcousticDoc.R.string.play)
+        binding.play.setText(R.string.play)
     }
      private fun startMusic() {
          val fullSoundUri = sharedViewModel.getModelUri()
          mediaPlayer.start()
          playing = 0
-         binding.play.setText(AcousticDoc.R.string.pause)
+         binding.play.setText(R.string.pause)
          Log.d("URI","URI $fullSoundUri")
      }
 

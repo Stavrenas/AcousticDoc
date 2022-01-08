@@ -3,8 +3,11 @@ package com.example.acousticdoc
 import AcousticDoc.R
 import AcousticDoc.databinding.FragmentSelectBinding
 import android.app.Activity
+import android.content.ContextWrapper
 import android.content.Intent
 import android.net.Uri
+import android.net.Uri.fromFile
+import android.net.Uri.parse
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -51,7 +54,10 @@ class SelectFragment : Fragment() {
                 Toast.LENGTH_LONG
             ).show()
             val intent = Intent(Intent.ACTION_GET_CONTENT)
-            intent.type = "audio/wav" // specify "audio/mp3" to filter only mp3 files
+//            val cw = ContextWrapper(context)
+//            val path = cw.getExternalFilesDir(null)
+            //intent.setDataAndType(fromFile(path), "audio/wav") // specify "audio/mp3" to filter only mp3 files
+            intent.type = "audio/wav"
             startActivityForResult(intent, 1)
 
         }
