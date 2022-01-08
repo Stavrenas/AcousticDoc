@@ -21,11 +21,11 @@
     <string name="now_recording">Γίνεται ηχογράφηση…</string>
     <string name="about">Σχετικά</string>
     <string name="file_history">Ιστορικό διαγνώσεων</string>
-    <string name="select_fragment_label">Επιλογή αρχείου</string>
+    <string name="select_fragment_label">Επιλογή ήχου</string>
     <string name="results">Το αποτέλεσμα της διάγνωσης είναι</string>
     <string name="healthy">Υγιές</string>
     <string name="unhealthy">Μη υγιές</string>
-    <string name="probabilty">Πιθανότητα υγιούς διάγνωσης:</string>
+    <string name="probability">Πιθανότητα υγιούς διάγνωσης:</string>
 
 
 </resources>
