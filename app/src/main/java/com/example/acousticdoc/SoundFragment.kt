@@ -4,12 +4,12 @@ import AcousticDoc.R
 import AcousticDoc.databinding.FragmentSoundBinding
 import AcousticDoc.ml.Model
 import android.content.Context
+import android.graphics.BitmapFactory
 import android.media.AudioAttributes
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
 import android.provider.OpenableColumns
-import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,9 +17,14 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import android.util.Log
+import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
+import android.widget.ImageView
 import com.example.acousticdoc.SoundHistory.SoundHistoryFragment
 import androidx.fragment.app.FragmentManager
 import androidx.navigation.fragment.findNavController
+import com.chaquo.python.PyException
+import com.chaquo.python.Python
 import com.example.acousticdoc.database.SoundHistory
 import org.tensorflow.lite.DataType
 import org.tensorflow.lite.support.label.TensorLabel
@@ -30,6 +35,8 @@ import org.tensorflow.lite.support.common.TensorProcessor;
 import org.tensorflow.lite.support.common.ops.NormalizeOp;
 import java.net.URLDecoder.decode
 import kotlin.random.Random
+import com.chaquo.python.android.AndroidPlatform
+import java.nio.ByteBuffer.wrap
 
 
 /**
@@ -108,12 +115,30 @@ class SoundFragment : Fragment() {
             val inputFeature0 = TensorBuffer.createFixedSize(intArrayOf(1, 27), DataType.FLOAT32)
             val byteBuffer = inputFeature0.buffer
 
+//
+//            for (i in 1..27){
+//                val rand: Float = Random.nextFloat()
+//                byteBuffer.putFloat(rand)
+//            }
 
-            for (i in 1..27){
-                val rand: Float = Random.nextFloat()
-                byteBuffer.putFloat(rand)
+            val py = Python.getInstance()
+            val module = py.getModule("main")
+
+            val uri = sharedViewModel.getModelUri()
+            val stream = uri?.let { it1 -> context?.contentResolver?.openInputStream(it1) }
+            val content = stream?.readBytes()
+            try {
+                val features = module.callAttr("extract",content).toJava(FloatArray::class.java)
+                for (i in 1..27){
+                    byteBuffer.putFloat(features[i])
+                }
+
+                inputFeature0.loadBuffer(byteBuffer)
+            } catch (e: PyException) {
+                Toast.makeText(context, e.message, Toast.LENGTH_LONG).show()
             }
-            inputFeature0.loadBuffer(byteBuffer)
+
+
 
 
 

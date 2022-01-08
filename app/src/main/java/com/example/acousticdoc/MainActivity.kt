@@ -17,7 +17,10 @@ import androidx.activity.result.contract.ActivityResultContracts
 import android.content.DialogInterface
 import android.os.Build
 import android.os.Environment
+import android.widget.Toast
 import androidx.annotation.RequiresApi
+import com.chaquo.python.Python
+import com.chaquo.python.android.AndroidPlatform
 import java.io.File
 
 
@@ -49,7 +52,13 @@ class MainActivity : AppCompatActivity() {
                 path.mkdirs()
             }
         }
+
         requestMultiplePermissions.launch(perms)
+        if (! Python.isStarted()) {
+            Python.start( AndroidPlatform(this));
+        }
+
+
 
     }
 

@@ -92,7 +92,7 @@ class RecordFragment  : Fragment()  {
                 binding.input.visibility =View.GONE
                 binding.textView2.visibility = View.GONE
                 binding.textView5.visibility = View.VISIBLE
-                Toast.makeText(context,"Started Recording", Toast.LENGTH_LONG).show()
+               // Toast.makeText(context,"Started Recording", Toast.LENGTH_LONG).show()
 
                 state = 1
             }

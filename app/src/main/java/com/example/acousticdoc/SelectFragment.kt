@@ -13,6 +13,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import com.chaquo.python.Python
 
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
@@ -44,19 +45,24 @@ class SelectFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.select.setOnClickListener {
+            Toast.makeText(
+                context,
+                "Η εφαρμογή μπορεί να επεξεργαστεί μόνο αρχεία ήχου .wav",
+                Toast.LENGTH_LONG
+            ).show()
             val intent = Intent(Intent.ACTION_GET_CONTENT)
-            intent.type = "audio/*" // specify "audio/mp3" to filter only mp3 files
+            intent.type = "audio/wav" // specify "audio/mp3" to filter only mp3 files
             startActivityForResult(intent, 1)
 
         }
 
         binding.add.setOnClickListener {
             findNavController().navigate(R.id.action_SelectFragment_to_RecordFragment)
-            Toast.makeText(
-                context,
-                "Record sound",
-                Toast.LENGTH_SHORT
-            ).show()
+//            Toast.makeText(
+//                context,
+//                "Record sound",
+//                Toast.LENGTH_SHORT
+//            ).show()
         }
         binding.history.setOnClickListener {
             findNavController().navigate(R.id.action_SelectFragment_to_SoundHistoryFragment)
