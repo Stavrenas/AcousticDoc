@@ -129,6 +129,7 @@ class SoundFragment : Fragment() {
             val content = stream?.readBytes()
             try {
                 val features = module.callAttr("extract",content).toJava(FloatArray::class.java)
+
                 for (i in 1..27){
                     byteBuffer.putFloat(features[i])
                 }

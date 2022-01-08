@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 
@@ -38,17 +39,16 @@ class ResultFragment: Fragment() {
             probability= probability.toFloat()
         }
         if (probability != null) {
-            if (probability > 0.8F){
+            if (probability > 0.5F){
                 binding.health.setText(R.string.healthy)
                 binding.health.setTextColor(Color.GREEN)
             }
-            else{
+            else if (probability < 0.5F){
                 binding.health.setText(R.string.unhealthy)
                 binding.health.setTextColor(Color.RED)
             }
         }
-
-        binding.prob.text = (1- probability!!).toString()
+        binding.prob.text = probability!!.toString()
 
     }
 

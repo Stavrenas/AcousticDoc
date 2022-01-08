@@ -7,23 +7,7 @@ Created on Fri Jan  7 23:29:15 2022
 import librosa
 import tempfile
 import numpy as np
-from os.path import dirname, join
-#import pandas as pd
-#from sklearn.model_selection import train_test_split
-#from sklearn.preprocessing import LabelEncoder, StandardScaler
 
-# data = pd.read_csv('dataset.csv')
-# data.head()
-# # Dropping unneccesary columns
-# data = data.drop(['filename'],axis=1)
-# #Encoding the Labels
-# genre_list = data.iloc[:, -1]
-# encoder = LabelEncoder()
-# y1 = encoder.fit_transform(genre_list)
-# #Scaling the Feature columns
-# scaler = StandardScaler()
-# scaler = scaler.fit(np.array(data.iloc[:, :-1], dtype = float))
-# X = scaler.transform(np.array(data.iloc[:, :-1]))
 
 def extract(content):
     feat = []
@@ -92,8 +76,6 @@ def extract(content):
         for e in mfcc_delta:
             feat.append(np.mean(e))
             feat.append(np.std(e))
-        # print(type(feat))
-        # feat = np.array(feat, ndmin=2).astype(np.float)
-        # print(type(feat))
+        # feat = np.array(feat, ndmin=2)
+
     return feat
-#feat = scaler.transform(feat)

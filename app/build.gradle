@@ -24,7 +24,8 @@ android {
                 // A requirement specifier, with or without a version number:
                 install "librosa"
                 install "numpy"
-                install "sklearn"
+                install "scikit-learn"
+                install "pandas"
 
             }
         }
