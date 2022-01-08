@@ -98,7 +98,7 @@
     <fragment
         android:id="@+id/ResultFragment"
         android:name="com.example.acousticdoc.ResultFragment"
-        android:label="Result"
+        android:label="@string/result_fragment_label"
         tools:layout="@layout/fragment_result">
 
     <action

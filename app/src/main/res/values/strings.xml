@@ -3,6 +3,7 @@
     <string name="action_settings">Ρυθμίσεις</string>
     <string name="sound_fragment_label">Διάγνωση</string>
     <string name="record_fragment_label">Ηχογράφηση</string>
+    <string name="result_fragment_label">Αποτέλεσμα</string>
     <string name="select">Επιλογή Αρχείου</string>
     <string name="play">Αναπαραγωγή</string>
     <string name="pause">Πάυση</string>
@@ -24,7 +25,7 @@
     <string name="results">Το αποτέλεσμα της διάγνωσης είναι</string>
     <string name="healthy">Υγιές</string>
     <string name="unhealthy">Μη υγιές</string>
-    <string name="probabilty">Η πιθανότητα νόσησης είναι </string>
+    <string name="probabilty">Πιθανότητα υγιούς διάγνωσης:</string>
 
 
 </resources>

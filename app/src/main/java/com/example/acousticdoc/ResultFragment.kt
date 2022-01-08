@@ -48,7 +48,7 @@ class ResultFragment: Fragment() {
             }
         }
 
-        binding.prob.text = probability.toString()
+        binding.prob.text = (1- probability!!).toString()
 
     }
 
