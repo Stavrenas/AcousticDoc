@@ -12,3 +12,15 @@ This application is part of a project in the course "Technology of Sound" at Ari
 * Chaquopy - Android Python SDK
 * Lbrosa (for Python)
 * Tensorflow Lite 
+
+# Home Screen              and              Recording Screen
+<p align="center">
+  <img src="https://github.com/Stavrenas/AcousticDoc/blob/master/s4.jpg" width="400" height="915" />
+  <img src="https://github.com/Stavrenas/AcousticDoc/blob/master/s2.jpg" width="400" height="915" />
+</p>
+
+# Diagnosis Screen           and            Result Screen
+<p align="center"> 
+  <img src="https://github.com/Stavrenas/AcousticDoc/blob/master/s1.jpg" width="400" height="915" />
+  <img src="https://github.com/Stavrenas/AcousticDoc/blob/master/s3.jpg" width="400" height="915" />
+</p>
