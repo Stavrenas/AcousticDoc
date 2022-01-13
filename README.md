@@ -5,7 +5,7 @@ This application is part of a project in the course "Technology of Sound" at Ari
 ## Android Libraries and Frameworks used:
 * Android JetPack Navigation
 * Fragments 
-* View biding
+* View binding
 * Shared View Model
  
 ## External Libraries
