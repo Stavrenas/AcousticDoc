@@ -10,5 +10,5 @@ This application is part of a project in the course "Technology of Sound" at Ari
  
 ## External Libraries
 * Chaquopy - Android Python SDK
+* Lbrosa (for Python)
 * Tensorflow Lite 
-
