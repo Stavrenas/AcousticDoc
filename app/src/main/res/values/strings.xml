@@ -9,7 +9,7 @@
     <string name="pause">Πάυση</string>
     <string name="title">Ο τίτλος του αρχείου είναι</string>
     <string name="type">Τύπος ήχου</string>
-    <string name="sound_select">Επιλέξτε αρχείο από το χώρο αποθήκευσης. Ηχογραφήστε με το κουμπί +</string>
+    <string name="sound_select">Επιλέξτε αρχείο από το χώρο αποθήκευσης. Διαφορετικά, ηχογραφήστε πατώντας το κουμπί του μικροφώνου</string>
     <string name="record_sound">Ηχογράφηση</string>
     <string name="diagnosis">Διάγνωση</string>
     <string name="breathing">Αναπνοή</string>
