@@ -54,7 +54,7 @@ class SelectFragment : Fragment() {
                 Toast.LENGTH_LONG
             ).show()
             val intent = Intent(Intent.ACTION_GET_CONTENT)
-            intent.type = "audio/wav"
+            intent.type = "audio/*"
             startActivityForResult(intent, 1)
 
         }

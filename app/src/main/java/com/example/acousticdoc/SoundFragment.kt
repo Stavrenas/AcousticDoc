@@ -100,8 +100,10 @@ class SoundFragment : Fragment() {
             val stream = uri?.let { it1 -> context?.contentResolver?.openInputStream(it1) }
             val content = stream?.readBytes()
             try {
-                val files = module.callAttr("cough_save",content).toInt()
+                val files = module.callAttr("cough_save",content).toString()
                 Log.d("URI","uri is $uri" )
+                //Toast.makeText(context, "$files files created", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, "$files filename", Toast.LENGTH_LONG).show()
                 //TODO Implement model prediction at each file produced
                 val features = module.callAttr("extract",content).toJava(FloatArray::class.java)
                 for (i in 0 until numFeatures){
@@ -156,9 +158,11 @@ class SoundFragment : Fragment() {
         }
 
     private fun pauseMusic(){
-        mediaPlayer.pause()
-        playing = 1
-        binding.play.setText(R.string.play)
+        if (playing!=1){
+            mediaPlayer.pause()
+            playing = 1
+            binding.play.setText(R.string.play)
+        }
     }
      private fun startMusic() {
          val fullSoundUri = sharedViewModel.getModelUri()

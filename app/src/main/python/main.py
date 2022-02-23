@@ -244,9 +244,7 @@ def cough_save(content):
 
         _, zcr_seq = zcr_signal(x,Fs,window_length,noverlap)
         t_coughs = cough_detection(zcr_seq, time_step)
-
-        distinct_coughs = np.array([])
-        
+        newFilename = "None"
         for i in range(t_coughs.shape[0]):
             start_cough = int(np.round(t_coughs[i,0]*Fs/1000))
             end_cough = int(np.round(t_coughs[i,1]*Fs/1000))
@@ -263,4 +261,4 @@ def cough_save(content):
             write(newFilename, Fs, distinct_cough.astype(np.float32))
             files = i
 
-    return files
+    return newFilename
