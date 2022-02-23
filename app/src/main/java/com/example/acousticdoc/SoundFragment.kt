@@ -99,11 +99,17 @@ class SoundFragment : Fragment() {
 
             val stream = uri?.let { it1 -> context?.contentResolver?.openInputStream(it1) }
             val content = stream?.readBytes()
+            var filename = ""
+            if (uri != null) {
+                val array = context?.let { it1 -> uri.getName(it1) }.toString().split(".wav")
+                filename = array[0]
+            }
+            Toast.makeText(context, "$filename filename", Toast.LENGTH_LONG).show()
             try {
-                val files = module.callAttr("cough_save",content).toString()
+                val files = module.callAttr("cough_save",content,filename).toString()
                 Log.d("URI","uri is $uri" )
                 //Toast.makeText(context, "$files files created", Toast.LENGTH_LONG).show()
-                Toast.makeText(context, "$files filename", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, "$files", Toast.LENGTH_LONG).show()
                 //TODO Implement model prediction at each file produced
                 val features = module.callAttr("extract",content).toJava(FloatArray::class.java)
                 for (i in 0 until numFeatures){

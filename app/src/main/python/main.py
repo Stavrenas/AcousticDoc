@@ -2,6 +2,7 @@
 import librosa
 import tempfile
 import numpy as np
+import os
 from numpy.random import randn
 from scipy.io.wavfile import write
 
@@ -228,14 +229,13 @@ def cough_detection(zcr_seq, time_step):
 
 
 
-def cough_save(content):
-	# cough_save(filename, directory)
-	# Input:
-	# filename: Directory of the wav file
-	# directory: Directory where to save the distinct coughs
+def cough_save(content,name):
+
     with tempfile.NamedTemporaryFile() as temp_file:
+        directory = os.environ["HOME"]
         temp_file.write(content)
         filename = temp_file.name
+
         x, Fs = librosa.load(filename)
         noverlap = 0.3
         nsec = 0.1
@@ -257,7 +257,7 @@ def cough_save(content):
 
             distinct_cough = x[samples_cough]
 
-            newFilename = filename.replace('.wav','_{i}.wav')
+            newFilename = directory +"/" name+"_"+str(i)+".wav"
             write(newFilename, Fs, distinct_cough.astype(np.float32))
             files = i
 
