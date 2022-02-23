@@ -20,6 +20,8 @@ import androidx.navigation.fragment.findNavController
 import com.chaquo.python.PyException
 import com.chaquo.python.Python
 import org.tensorflow.lite.DataType
+import org.tensorflow.lite.support.common.TensorProcessor
+import org.tensorflow.lite.support.common.ops.NormalizeOp
 import org.tensorflow.lite.support.label.TensorLabel
 import org.tensorflow.lite.support.tensorbuffer.TensorBuffer
 import java.net.URLDecoder.decode
@@ -83,41 +85,26 @@ class SoundFragment : Fragment() {
 
         binding.Diagnosis.setOnClickListener {
             pauseMusic()
-
-//            val selectedId: Int = binding.radioGroup.checkedRadioButtonId
-//            var selected: String
-//
-//            if (selectedId == binding.cough.id) {
-//                selected = "Cough"
-//                 val history = SoundHistory(firstName = "Stavr", lastName = "Pip", diagnosis = "COV")
-//
-//            }
-//            else {
-//                selected = "Breathing"
-//            }
-
+            val numFeatures  = 108
             val model = context?.let { Model.newInstance(it) }
 
             // Creates inputs for reference.
-            val inputFeature0 = TensorBuffer.createFixedSize(intArrayOf(1, 27), DataType.FLOAT32)
+            val inputFeature0 = TensorBuffer.createFixedSize(intArrayOf(1, numFeatures), DataType.FLOAT32)
             val byteBuffer = inputFeature0.buffer
-
-//
-//            for (i in 1..27){
-//                val rand: Float = Random.nextFloat()
-//                byteBuffer.putFloat(rand)
-//            }
 
             val py = Python.getInstance()
             val module = py.getModule("main")
 
             val uri = sharedViewModel.getModelUri()
+
             val stream = uri?.let { it1 -> context?.contentResolver?.openInputStream(it1) }
             val content = stream?.readBytes()
             try {
+                val files = module.callAttr("cough_save",content).toInt()
+                Log.d("URI","uri is $uri" )
+                //TODO Implement model prediction at each file produced
                 val features = module.callAttr("extract",content).toJava(FloatArray::class.java)
-
-                for (i in 1..27){
+                for (i in 0 until numFeatures){
                     byteBuffer.putFloat(features[i])
                 }
 
@@ -126,11 +113,17 @@ class SoundFragment : Fragment() {
                 Toast.makeText(context, e.message, Toast.LENGTH_LONG).show()
             }
 
+            for (i in 0 until numFeatures) {
+                var s = byteBuffer[i]
+                Log.d("Out","$s" )
+            }
+
+            // Apply normalization operator for image classification (a necessary step)
+            val probabilityProcessor =
+                TensorProcessor.Builder().add(NormalizeOp(0f, 255f)).build()
 
 
-
-
-            val outputs =model?.process(inputFeature0)
+            val outputs =model?.process(probabilityProcessor.process(inputFeature0))
             // getting the output
             val outputBuffer = outputs?.outputFeature0AsTensorBuffer
 
@@ -145,13 +138,10 @@ class SoundFragment : Fragment() {
                 sharedViewModel.setProbabilty(probability)
             }
 
-
             findNavController().navigate(R.id.action_SoundFragment_to_ResultFragment)
 
             // Releases model resources if no longer used.
             model?.close()
-
-
 
         }
     }
@@ -178,6 +168,7 @@ class SoundFragment : Fragment() {
          Log.d("URI","URI $fullSoundUri")
      }
 
+    //Hack to get funky file name from URI
     private fun Uri.getName(context: Context): String {
         val returnCursor = context.contentResolver.query(this, null, null, null, null)
         val nameIndex = returnCursor?.getColumnIndex(OpenableColumns.DISPLAY_NAME)

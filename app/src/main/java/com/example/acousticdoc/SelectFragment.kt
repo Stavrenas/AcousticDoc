@@ -54,9 +54,6 @@ class SelectFragment : Fragment() {
                 Toast.LENGTH_LONG
             ).show()
             val intent = Intent(Intent.ACTION_GET_CONTENT)
-//            val cw = ContextWrapper(context)
-//            val path = cw.getExternalFilesDir(null)
-            //intent.setDataAndType(fromFile(path), "audio/wav") // specify "audio/mp3" to filter only mp3 files
             intent.type = "audio/wav"
             startActivityForResult(intent, 1)
 
@@ -64,14 +61,6 @@ class SelectFragment : Fragment() {
 
         binding.add.setOnClickListener {
             findNavController().navigate(R.id.action_SelectFragment_to_RecordFragment)
-//            Toast.makeText(
-//                context,
-//                "Record sound",
-//                Toast.LENGTH_SHORT
-//            ).show()
-        }
-        binding.history.setOnClickListener {
-            findNavController().navigate(R.id.action_SelectFragment_to_SoundHistoryFragment)
         }
     }
 

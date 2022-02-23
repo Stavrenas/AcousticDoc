@@ -32,8 +32,6 @@ class ResultFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         var probability = sharedViewModel.getProbabitly()
-        binding.health.setText(R.string.healthy)
-        binding.health.setTextColor(Color.GREEN)
 
         if (probability != null) {
             probability= probability.toFloat()
@@ -48,7 +46,7 @@ class ResultFragment: Fragment() {
                 binding.health.setTextColor(Color.RED)
             }
         }
-        binding.prob.text = probability!!.toString()
+        //binding.prob.text = probability!!.toString()
 
     }
 

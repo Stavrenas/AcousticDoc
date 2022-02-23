@@ -32,9 +32,8 @@ class RecordFragment  : Fragment()  {
     private var _binding: FragmentRecordBinding? = null
     private val binding get() = _binding!!
     private val sharedViewModel: ViewModel by activityViewModels()
-    private val recorder = MediaRecorder()
     private lateinit var mRecorder : WavAudioRecorder
-    private var state =0
+    private var state = 0
 
 
     override fun onCreateView(
@@ -72,26 +71,15 @@ class RecordFragment  : Fragment()  {
 
             if (state == 0){
                 //recorder setup
-//                recorder.setAudioSource(MediaRecorder.AudioSource.MIC)
-//                recorder.setOutputFormat(MediaRecorder.OutputFormat.AAC_ADTS)
-//                recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
-//                recorder.setAudioSamplingRate(44100)
-//                recorder.setAudioEncodingBitRate(16*44100)
-//                recorder.setOutputFile(fileName)
-//
-//                recorder.prepare()
-//                recorder.start()
-
                 mRecorder = WavAudioRecorder.getInstanse();
                 mRecorder.setOutputFile(fileName);
                 mRecorder.prepare();
                 mRecorder.start();
 
-
                 binding.recording.setText(R.string.stop_recording)
                 binding.input.visibility =View.GONE
-                binding.textView2.visibility = View.GONE
-                binding.textView5.visibility = View.VISIBLE
+                binding.textView2.text = getText(R.string.now_recording)
+
                // Toast.makeText(context,"Started Recording", Toast.LENGTH_LONG).show()
 
                 state = 1
@@ -99,8 +87,6 @@ class RecordFragment  : Fragment()  {
             else if (state == 1){
                 //stop recording, save file and change fragment
                     binding.recording.isEnabled = false
-                //recorder.stop()
-                //recorder.release()
 
                 mRecorder.stop();
                 mRecorder.reset();
