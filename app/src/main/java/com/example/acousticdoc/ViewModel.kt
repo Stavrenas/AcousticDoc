@@ -43,10 +43,4 @@ class ViewModel : ViewModel() {
 
 }
 
-//@BindingAdapter("resource")
-//fun setSoundUri(view: ImageView, sound: Uri) {
-//    view.setImageURI(sound)
-//}
-
-
 

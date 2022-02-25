@@ -15,16 +15,12 @@ class ResultFragment: Fragment() {
     private val binding get() = _binding!!
     private val sharedViewModel: ViewModel by activityViewModels()
 
-
-
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentResultBinding.inflate(inflater, container, false)
         return binding.root
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -44,9 +40,8 @@ class ResultFragment: Fragment() {
                 binding.health.setTextColor(Color.RED)
             }
         }
+        //Enable this to display probability on result screen
         //binding.prob.text = probability!!.toString()
-
     }
-
 
 }

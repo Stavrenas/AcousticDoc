@@ -27,21 +27,17 @@ class SelectFragment : Fragment() {
     private val binding get() = _binding!!
     private val sharedViewModel: ViewModel by activityViewModels()
 
-
     companion object {
         private const val REQUEST_SOUND_CAPTURE = 1000
         const val REQUEST_SOUND_OPEN = 1
     }
 
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
         _binding = FragmentSelectBinding.inflate(inflater, container, false)
         return binding.root
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -79,12 +75,12 @@ class SelectFragment : Fragment() {
     }
 
     private fun popup() {
-            Toast.makeText(
-                context,
-                "Η εφαρμογή μπορεί να επεξεργαστεί μόνο αρχεία ήχου .wav",
-                Toast.LENGTH_LONG
-            ).show()
-
+        Toast.makeText(
+            context,
+            "Η εφαρμογή μπορεί να επεξεργαστεί μόνο αρχεία ήχου .wav",
+            Toast.LENGTH_LONG
+        ).show()
     }
+
 }
 

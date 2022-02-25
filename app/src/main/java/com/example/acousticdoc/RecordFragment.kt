@@ -33,7 +33,7 @@ class RecordFragment  : Fragment()  {
     private val binding get() = _binding!!
     private val sharedViewModel: ViewModel by activityViewModels()
     private lateinit var mRecorder : WavAudioRecorder
-    private var state = 0
+    private var state = 0  //represents recording or not recording
 
 
     override fun onCreateView(
@@ -50,7 +50,6 @@ class RecordFragment  : Fragment()  {
         super.onViewCreated(view, savedInstanceState)
 
         binding.recording.isEnabled = false
-
         val myEditText = binding.input as EditText
 
         myEditText.addTextChangedListener(object : TextWatcher {
@@ -58,7 +57,7 @@ class RecordFragment  : Fragment()  {
                 //enabled only if string not empty
                 binding.recording.isEnabled = myEditText.text.toString() != ""
             }
-
+            //Boilerplate code
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
         })
@@ -80,14 +79,11 @@ class RecordFragment  : Fragment()  {
                 binding.input.visibility =View.GONE
                 binding.textView2.text = getText(R.string.now_recording)
 
-               // Toast.makeText(context,"Started Recording", Toast.LENGTH_LONG).show()
-
                 state = 1
             }
             else if (state == 1){
                 //stop recording, save file and change fragment
-                    binding.recording.isEnabled = false
-
+                binding.recording.isEnabled = false
                 mRecorder.stop();
                 mRecorder.reset();
                 sharedViewModel.setModelUri(Uri.fromFile(File(fileName)))

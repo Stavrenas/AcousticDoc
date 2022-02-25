@@ -43,9 +43,8 @@ class SoundFragment : Fragment() {
     private var _binding: FragmentSoundBinding? = null
     private val binding get() = _binding!!
     private val sharedViewModel: ViewModel by activityViewModels()
-    private var playing = 1
+    private var playing = 1  //represent playing state of media player
     private var mediaPlayer = MediaPlayer()
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -53,20 +52,16 @@ class SoundFragment : Fragment() {
     ): View {
         _binding = FragmentSoundBinding.inflate(inflater, container, false)
         return binding.root
-
     }
 
     @RequiresApi(Build.VERSION_CODES.S)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val fullSoundUri = sharedViewModel.getModelUri()
-
-        if (fullSoundUri != null) {
-            binding.soundTitle.text = context?.let { decode(fullSoundUri.getName(it)) }
-        }
         val myUri: Uri? = sharedViewModel.getModelUri()
 
-
+        //set sound file title text from uri
+        if (myUri != null)
+            binding.soundTitle.text = context?.let { decode(myUri.getName(it)) }
 
         //initialize player
         mediaPlayer = MediaPlayer().apply {
@@ -92,7 +87,9 @@ class SoundFragment : Fragment() {
         }
 
         binding.Diagnosis.setOnClickListener {
+            //create two jobs to update the ui and run audio file processing simultaneously
 
+            //audio processing
             val job = viewLifecycleOwner.lifecycleScope.launch  {
                 val probability = withContext(Dispatchers.Default){
                     diagnosis()
@@ -100,20 +97,22 @@ class SoundFragment : Fragment() {
                 sharedViewModel.setProbability(probability)
             }
 
+            //UI updating
             MainScope().launch {
+                //show progress bar when the diagnosis button is pressed
                 binding.Diagnosis.visibility = View.GONE
                 binding.processing.text = "Επεξεργασία αρχείου..."
                 binding.progress.isIndeterminate = true
                 binding.processing.visibility = View.VISIBLE
                 binding.progress.visibility = View.VISIBLE
 
+                //wait for the audio processing to complete
                 job.join()
 
                 withContext(Dispatchers.Main) {
 
                     val probability = sharedViewModel.getProbability()
                     Toast.makeText(context, "Prob is $probability", Toast.LENGTH_LONG).show()
-
 
                     if (probability != null) {
                         if (probability >= 0) {
@@ -141,16 +140,17 @@ class SoundFragment : Fragment() {
     fun diagnosis(): Float{
         val py = Python.getInstance()
         val module = py.getModule("main")
-        val model = context?.let { Model.newInstance(it) }
 
-        // Creates inputs for reference.
+        // Creates inputs for the covid detection model and the model itself
         val numFeatures = 270
         val inputFeature0 =
             TensorBuffer.createFixedSize(intArrayOf(1, numFeatures), DataType.FLOAT32)
         val byteBuffer = inputFeature0.buffer
-
+        val model = context?.let { Model.newInstance(it) }
         var probability = 0f
-        var files = 0
+
+
+        //create Filename to pass to the python function to create mulitple audio files containing a cough each
         var filename = ""
         val uri = sharedViewModel.getModelUri()
         if (uri != null) {
@@ -159,43 +159,48 @@ class SoundFragment : Fragment() {
             filename = array[0]
         }
 
-        val stream = uri?.let { it1 -> context?.contentResolver?.openInputStream(it1) }
-        val content = stream?.readBytes()
 
+        //find total files containing a cough each
+        var files = 0
         try {
+            val stream = uri?.let { it1 -> context?.contentResolver?.openInputStream(it1) }
+            val content = stream?.readBytes()
             files = module.callAttr("cough_save", content, filename).toInt()
-            //Log.d("URI","uri is $uri" )
-            // Toast.makeText(context, "$files files created", Toast.LENGTH_LONG).show()
-            //Toast.makeText(context, "$files", Toast.LENGTH_SHORT).show()
         } catch (e: PyException) {
             Toast.makeText(context, e.message, Toast.LENGTH_LONG).show()
         }
+
 
         //Check each produced file and test if it is considered as a cough
         //if yes, proceed to feature extraction
         var coughFiles = 0
         for (fileNumber in 0..files) {
+
+            //Get produced filename
             val slicedFileName =
                 getFilePath().toString() + "/" + filename + "_" + fileNumber.toString() + ".wav"
             val slicedUri = Uri.fromFile(File(slicedFileName))
             val slicedStream = slicedUri?.let { it1 -> context?.contentResolver?.openInputStream(it1) }
             val slicedContent = slicedStream?.readBytes()
 
+
+            //create cough detection model and input buffer
             val coughCheckNumFeatures = 40
             val inputFeature1 =
                 TensorBuffer.createFixedSize(intArrayOf(1, coughCheckNumFeatures), DataType.FLOAT32)
             val byteBuffer1 = inputFeature1.buffer
+            val model1 = context?.let { it1 -> CoughCheck.newInstance(it1) }
+
+            //extract audio features
             try {
-                val coughCheckFeatures =
-                    module.callAttr("features_extractor_cough_check", slicedContent).toJava(FloatArray::class.java)
+                val coughCheckFeatures =module.callAttr("features_extractor_cough_check", slicedContent).toJava(FloatArray::class.java)
                 for (i in 0 until coughCheckNumFeatures) {byteBuffer1.putFloat(i,coughCheckFeatures[i])}
                 inputFeature1.loadBuffer(byteBuffer1)
             } catch (e: PyException) {
                 Toast.makeText(context, e.message, Toast.LENGTH_LONG).show()
             }
 
-            val model1 = context?.let { it1 -> CoughCheck.newInstance(it1) }
-
+            //run inference
             val coughOutputs = model1?.process(inputFeature1)
             val coughOutputBuffer = coughOutputs?.outputFeature0AsTensorBuffer
 
@@ -210,13 +215,13 @@ class SoundFragment : Fragment() {
                     )
                 }
 
-            val coughProbability = coughTensorLabel?.mapWithFloatValue?.get("Cough")!!
 
+            val coughProbability = coughTensorLabel?.mapWithFloatValue?.get("Cough")!!
+            //if the file contains a cough, extract features for covid detection
             if (coughProbability > 0.7) {
                 coughFiles += 1
                 try {
-                    val features =
-                        module.callAttr("extract", slicedContent).toJava(FloatArray::class.java)
+                    val features = module.callAttr("extract", slicedContent).toJava(FloatArray::class.java)
                     for (i in 0 until numFeatures) {  byteBuffer.putFloat(i, features[i]) }
                     inputFeature0.loadBuffer(byteBuffer)
                 } catch (e: PyException) {
@@ -229,7 +234,6 @@ class SoundFragment : Fragment() {
 //                }
 
                 val outputs = model?.process(inputFeature0)
-                // getting the output
                 val outputBuffer = outputs?.outputFeature0AsTensorBuffer
 
                 // adding labels to the output
@@ -248,6 +252,7 @@ class SoundFragment : Fragment() {
             }
 
         }
+
         if(coughFiles > 0)
             probability /= (coughFiles+1)
         else
@@ -272,6 +277,7 @@ class SoundFragment : Fragment() {
             binding.play.setText(R.string.play)
         }
     }
+
      private fun startMusic() {
          val fullSoundUri = sharedViewModel.getModelUri()
          mediaPlayer.start()
@@ -295,42 +301,17 @@ class SoundFragment : Fragment() {
         }
     }
 
-
     override fun onDestroyView() {
         if(playing == 0)
         mediaPlayer.pause()
         super.onDestroyView()
         _binding = null
-
     }
 
     @RequiresApi(Build.VERSION_CODES.S)
     fun getFilePath(): File? {
         val cw = ContextWrapper(activity)
         return cw.getExternalFilesDir(null)
-    }
-
-    class CoolThread : Callable<Float> {
-        @Volatile
-
-        lateinit var function : () -> Float
-        var probability = 0f
-
-        override fun call(): Float {
-            probability = function()
-            return  probability
-        }
-    }
-
-    class CoolThread1 : Runnable {
-        @Volatile
-        lateinit var function : () -> Float
-
-        var probability = 0f
-
-        override fun run() {
-            probability = function()
-        }
     }
 
 }
