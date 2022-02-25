@@ -2,12 +2,12 @@
 import librosa
 import tempfile
 import numpy as np
-from os.path import dirname,join
+from scipy import stats
 from com.chaquo.python import Python
 from numpy.random import randn
 from scipy.io.wavfile import write
 
-def extract(content):
+def extract2(content):
 
     mean = [3.81824020e-01,  2.95271863e-01,  2.03439715e+03,
             7.39622100e+02,  1.69879041e+03,  4.49268124e+02,
@@ -144,6 +144,59 @@ def extract(content):
         # feat = np.array(feat, ndmin=2)
 
     return feat
+
+def extract(content):
+
+    with tempfile.NamedTemporaryFile() as temp_file:
+        temp_file.write(content)
+        filename = temp_file.name
+        y, sr = librosa.load(filename, mono=True, duration=30)
+        chroma_stft = librosa.feature.chroma_stft(y=y, sr=sr)
+        chroma_delta = librosa.feature.delta(chroma_stft)
+
+        spec_cent = librosa.feature.spectral_centroid(y=y, sr=sr)
+        cent_delta = librosa.feature.delta(spec_cent)
+
+        spec_bw = librosa.feature.spectral_bandwidth(y=y, sr=sr)
+        bw_delta = librosa.feature.delta(spec_bw)
+
+        rolloff = librosa.feature.spectral_rolloff(y=y, sr=sr)
+        rolloff_delta = librosa.feature.delta(rolloff)
+
+        zcr = librosa.feature.zero_crossing_rate(y)
+        zcr_delta = librosa.feature.delta(zcr)
+
+        spec_flat = librosa.feature.spectral_flatness(y=y)
+        flat_delta = librosa.feature.delta(spec_flat)
+
+        spec_contr = librosa.feature.spectral_contrast(y=y, sr=sr)
+        contr_delta = librosa.feature.delta(spec_contr)
+
+        mfcc = librosa.feature.mfcc(y=y, sr=sr)
+        mfcc_delta = librosa.feature.delta(mfcc)
+        features = []
+        features.extend([np.mean(chroma_stft), np.std(chroma_stft), np.var(chroma_stft), stats.skew(chroma_stft,axis=None), stats.kurtosis(chroma_stft,axis=None),
+               np.mean(spec_cent), np.std(spec_cent), np.var(spec_cent), stats.skew(spec_cent,axis=None), stats.kurtosis(spec_cent,axis=None), 
+               np.mean(spec_bw), np.std(spec_bw), np.var(spec_bw), stats.skew(spec_bw,axis=None), stats.kurtosis(spec_bw,axis=None), 
+               np.mean(rolloff), np.std(rolloff), np.var(rolloff), stats.skew(rolloff,axis=None), stats.kurtosis(rolloff,axis=None), 
+               np.mean(zcr), np.std(zcr), np.var(zcr), stats.skew(zcr,axis=None), stats.kurtosis(zcr,axis=None), 
+               np.mean(spec_flat), np.std(spec_flat), np.var(spec_flat), stats.skew(spec_flat,axis=None), stats.kurtosis(spec_flat,axis=None), 
+               np.mean(spec_contr), np.std(spec_contr), np.var(spec_contr), stats.skew(spec_contr,axis=None), stats.kurtosis(spec_contr,axis=None)])
+        for e in mfcc:
+            features.extend( [np.mean(e), np.std(e), np.var(e), stats.skew(e,axis=None), stats.kurtosis(e,axis=None)])
+
+        features.extend([ np.mean(chroma_delta), np.std(chroma_delta), np.var(chroma_delta), stats.skew(chroma_delta,axis=None), stats.kurtosis(chroma_delta,axis=None),
+               np.mean(cent_delta), np.std(cent_delta), np.var(cent_delta), stats.skew(cent_delta,axis=None), stats.kurtosis(cent_delta,axis=None), 
+               np.mean(bw_delta), np.std(bw_delta), np.var(bw_delta), stats.skew(bw_delta,axis=None), stats.kurtosis(bw_delta,axis=None), 
+               np.mean(rolloff_delta), np.std(rolloff_delta), np.var(rolloff_delta), stats.skew(rolloff_delta,axis=None), stats.kurtosis(rolloff_delta,axis=None), 
+               np.mean(zcr_delta), np.std(zcr_delta), np.var(zcr_delta), stats.skew(zcr_delta,axis=None), stats.kurtosis(zcr_delta,axis=None), 
+               np.mean(flat_delta), np.std(flat_delta), np.var(flat_delta), stats.skew(flat_delta,axis=None), stats.kurtosis(flat_delta,axis=None), 
+               np.mean(contr_delta), np.std(contr_delta), np.var(contr_delta), stats.skew(contr_delta,axis=None), stats.kurtosis(contr_delta,axis=None)])
+
+        for e in mfcc_delta:
+            features.extend( [np.mean(e), np.std(e), np.var(e), stats.skew(e,axis=None), stats.kurtosis(e,axis=None)])
+
+        return features
 
 
 def zcr(window):
