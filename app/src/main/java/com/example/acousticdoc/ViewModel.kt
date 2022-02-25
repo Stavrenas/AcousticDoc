@@ -34,7 +34,7 @@ class ViewModel : ViewModel() {
     }
 
     fun setProbabilty(prob: Float){
-        _probability.value = prob
+        _probability.postValue(prob)
     }
 
     fun getProbabitly(): Float?{

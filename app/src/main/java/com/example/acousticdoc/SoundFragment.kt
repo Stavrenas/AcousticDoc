@@ -2,20 +2,25 @@ package com.example.acousticdoc
 
 import AcousticDoc.R
 import AcousticDoc.databinding.FragmentSoundBinding
+import AcousticDoc.ml.CoughCheck
 import AcousticDoc.ml.Model
+import android.app.AlertDialog
 import android.content.Context
+import android.content.ContextWrapper
 import android.media.AudioAttributes
 import android.media.MediaPlayer
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.OpenableColumns
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import android.util.Log
 import androidx.navigation.fragment.findNavController
 import com.chaquo.python.PyException
 import com.chaquo.python.Python
@@ -24,8 +29,8 @@ import org.tensorflow.lite.support.common.TensorProcessor
 import org.tensorflow.lite.support.common.ops.NormalizeOp
 import org.tensorflow.lite.support.label.TensorLabel
 import org.tensorflow.lite.support.tensorbuffer.TensorBuffer
+import java.io.File
 import java.net.URLDecoder.decode
-
 
 
 /**
@@ -49,6 +54,7 @@ class SoundFragment : Fragment() {
 
     }
 
+    @RequiresApi(Build.VERSION_CODES.S)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val fullSoundUri = sharedViewModel.getModelUri()
@@ -85,72 +91,145 @@ class SoundFragment : Fragment() {
 
         binding.Diagnosis.setOnClickListener {
             pauseMusic()
-            val numFeatures  = 108
-            val model = context?.let { Model.newInstance(it) }
+            binding.Diagnosis.visibility = View.GONE
+            binding.processing.text = "Επεξεργασία αρχείου..."
+            binding.progress.isIndeterminate = true
+            binding.processing.visibility = View.VISIBLE
+            binding.progress.visibility = View.VISIBLE
 
-            // Creates inputs for reference.
-            val inputFeature0 = TensorBuffer.createFixedSize(intArrayOf(1, numFeatures), DataType.FLOAT32)
-            val byteBuffer = inputFeature0.buffer
+
 
             val py = Python.getInstance()
             val module = py.getModule("main")
+            val model = context?.let { Model.newInstance(it) }
 
+            // Creates inputs for reference.
+            val numFeatures = 108
+            val inputFeature0 =
+                TensorBuffer.createFixedSize(intArrayOf(1, numFeatures), DataType.FLOAT32)
+            val byteBuffer = inputFeature0.buffer
+
+            var probability = 0f
+            var files = 0
+            var filename = ""
             val uri = sharedViewModel.getModelUri()
+            if (uri != null) {
+                val array =
+                    context?.let { it1 -> uri.getName(it1) }.toString().split(".wav")
+                filename = array[0]
+            }
 
             val stream = uri?.let { it1 -> context?.contentResolver?.openInputStream(it1) }
             val content = stream?.readBytes()
-            var filename = ""
-            if (uri != null) {
-                val array = context?.let { it1 -> uri.getName(it1) }.toString().split(".wav")
-                filename = array[0]
-            }
-            Toast.makeText(context, "$filename filename", Toast.LENGTH_LONG).show()
-            try {
-                val files = module.callAttr("cough_save",content,filename).toString()
-                Log.d("URI","uri is $uri" )
-                //Toast.makeText(context, "$files files created", Toast.LENGTH_LONG).show()
-                Toast.makeText(context, "$files", Toast.LENGTH_LONG).show()
-                //TODO Implement model prediction at each file produced
-                val features = module.callAttr("extract",content).toJava(FloatArray::class.java)
-                for (i in 0 until numFeatures){
-                    byteBuffer.putFloat(features[i])
-                }
 
-                inputFeature0.loadBuffer(byteBuffer)
+            try {
+                files = module.callAttr("cough_save", content, filename).toInt()
+                Log.d("URI","uri is $uri" )
+                // Toast.makeText(context, "$files files created", Toast.LENGTH_LONG).show()
+                //Toast.makeText(context, "$files", Toast.LENGTH_SHORT).show()
             } catch (e: PyException) {
                 Toast.makeText(context, e.message, Toast.LENGTH_LONG).show()
             }
 
-            for (i in 0 until numFeatures) {
-                var s = byteBuffer[i]
-                Log.d("Out","$s" )
+            //Check each produced file and test if it is considered as a cough
+            //if yes, proceed to feature extraction
+            var coughExists = 0
+            for (fileNumber in 0..files) {
+                val slicedFileName =
+                    getFilePath().toString() + "/" + filename + "_" + fileNumber.toString() + ".wav"
+                val slicedUri = Uri.fromFile(File(slicedFileName))
+                val slicedStream = slicedUri?.let { it1 -> context?.contentResolver?.openInputStream(it1) }
+                val slicedContent = slicedStream?.readBytes()
+
+                val coughCheckNumFeatures = 40
+                val inputFeature1 =
+                    TensorBuffer.createFixedSize(intArrayOf(1, coughCheckNumFeatures), DataType.FLOAT32)
+                val byteBuffer1 = inputFeature1.buffer
+                try {
+                    val coughCheckFeatures =
+                        module.callAttr("features_extractor_cough_check", slicedContent).toJava(FloatArray::class.java)
+                    for (i in 0 until coughCheckNumFeatures) {byteBuffer1.putFloat(i,coughCheckFeatures[i])}
+                    inputFeature1.loadBuffer(byteBuffer1)
+                } catch (e: PyException) {
+                    Toast.makeText(context, e.message, Toast.LENGTH_LONG).show()
+                }
+
+                val model1 = context?.let { it1 -> CoughCheck.newInstance(it1) }
+
+                val coughOutputs = model1?.process(inputFeature1)
+                val coughOutputBuffer = coughOutputs?.outputFeature0AsTensorBuffer
+
+                // adding labels to the output
+                val coughTensorLabel =
+                    coughOutputBuffer?.let { it1 ->
+                        TensorLabel(
+                            arrayListOf(
+                                "Cough",
+                                "Not Cough"
+                            ), it1
+                        )
+                    }
+
+                val coughProbability = coughTensorLabel?.mapWithFloatValue?.get("Cough")!!
+
+                if (coughProbability > 0.7) {
+                    coughExists = 1
+                    try {
+                        val features =
+                            module.callAttr("extract", slicedContent).toJava(FloatArray::class.java)
+                        for (i in 0 until numFeatures) {  byteBuffer.putFloat(i, features[i]) }
+                        inputFeature0.loadBuffer(byteBuffer)
+                    } catch (e: PyException) {
+                        Toast.makeText(context, e.message, Toast.LENGTH_LONG).show()
+                    }
+
+                    for (i in 0 until numFeatures) {
+                        val s = byteBuffer[i]
+                        Log.d("Out", "$s")
+                    }
+
+                    val outputs = model?.process(inputFeature0)
+                    // getting the output
+                    val outputBuffer = outputs?.outputFeature0AsTensorBuffer
+
+                    // adding labels to the output
+                    val tensorLabel =
+                        outputBuffer?.let { it1 ->
+                            TensorLabel(
+                                arrayListOf(
+                                    "Healthy",
+                                    "Not Healthy"
+                                ), it1
+                            )
+                        }
+
+                    // getting the first label (Healthy) probability
+                    // if 80 (you can change that) then we are pretty sure it is  Healthy -> update UI
+                    probability += tensorLabel?.mapWithFloatValue?.get("Healthy")!!
+                }
+
             }
 
-            // Apply normalization operator for image classification (a necessary step)
-            val probabilityProcessor =
-                TensorProcessor.Builder().add(NormalizeOp(0f, 255f)).build()
+            probability /= (files+1)
 
-
-            val outputs =model?.process(probabilityProcessor.process(inputFeature0))
-            // getting the output
-            val outputBuffer = outputs?.outputFeature0AsTensorBuffer
-
-            // adding labels to the output
-            val tensorLabel =
-                outputBuffer?.let { it1 -> TensorLabel(arrayListOf("Healthy", "Not Healthy"), it1) }
-
-            // getting the first label (Healthy) probability
-            // if 80 (you can change that) then we are pretty sure it is  Healthy -> update UI
-            val probability = tensorLabel?.mapWithFloatValue?.get("Healthy")
-            if (probability != null) {
+            if (coughExists ==1 ) {
                 sharedViewModel.setProbabilty(probability)
+                // Releases model resources if no longer used.
+                model?.close()
+                findNavController().navigate(R.id.action_SoundFragment_to_ResultFragment)
             }
+            else {
+                binding.Diagnosis.visibility = View.VISIBLE
+                binding.processing.visibility = View.GONE
+                binding.progress.visibility = View.GONE
 
-            findNavController().navigate(R.id.action_SoundFragment_to_ResultFragment)
-
-            // Releases model resources if no longer used.
-            model?.close()
-
+                AlertDialog.Builder(context)
+                    .setTitle("Δεν εντοπίστηκε Βήχας")
+                    .setMessage("Δεν υπάρχει ήχος βήχα σε αυτό το αρχείο. Δοκιμάστε ξανά.")
+                    // The dialog is automatically dismissed when a dialog button is clicked.
+                    .setPositiveButton("Εντάξει", null)
+                    .show()
+            }
         }
     }
 
@@ -201,4 +280,12 @@ class SoundFragment : Fragment() {
         _binding = null
 
     }
+
+    @RequiresApi(Build.VERSION_CODES.S)
+    fun getFilePath(): File? {
+        val cw = ContextWrapper(activity)
+        return cw.getExternalFilesDir(null)
+    }
+
 }
+

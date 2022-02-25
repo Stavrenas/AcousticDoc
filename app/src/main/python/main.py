@@ -2,7 +2,8 @@
 import librosa
 import tempfile
 import numpy as np
-import os
+from os.path import dirname,join
+from com.chaquo.python import Python
 from numpy.random import randn
 from scipy.io.wavfile import write
 
@@ -227,12 +228,22 @@ def cough_detection(zcr_seq, time_step):
 
 	return t_coughs[1:, :]
 
+def features_extractor_cough_check(content):
+    with tempfile.NamedTemporaryFile() as temp_file:
+        temp_file.write(content)
+        file = temp_file.name
+        audio, sample_rate = librosa.load(file, res_type='kaiser_fast')
+        mfccs_features = librosa.feature.mfcc(y=audio, sr=sample_rate, n_mfcc=40)
+        mfccs_scaled_features = np.mean(mfccs_features.T,axis=0)
+
+    return mfccs_scaled_features
+
 
 
 def cough_save(content,name):
 
     with tempfile.NamedTemporaryFile() as temp_file:
-        directory = os.environ["HOME"]
+        directory = str(Python.getPlatform().getApplication().getExternalFilesDir(None))
         temp_file.write(content)
         filename = temp_file.name
 
@@ -256,9 +267,9 @@ def cough_save(content,name):
             samples_cough = range(start_cough,end_cough+1)
 
             distinct_cough = x[samples_cough]
-
-            newFilename = directory +"/" name+"_"+str(i)+".wav"
+            title = name+"_"+str(i)+".wav"
+            newFilename = directory+"/"+title
             write(newFilename, Fs, distinct_cough.astype(np.float32))
             files = i
 
-    return newFilename
+    return files
