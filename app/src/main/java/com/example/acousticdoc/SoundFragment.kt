@@ -229,6 +229,7 @@ class SoundFragment : Fragment() {
                     // The dialog is automatically dismissed when a dialog button is clicked.
                     .setPositiveButton("Εντάξει", null)
                     .show()
+                findNavController().navigate(R.id.action_SoundFragment_to_SelectFragment)
             }
         }
     }

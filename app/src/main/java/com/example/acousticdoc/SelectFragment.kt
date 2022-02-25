@@ -48,11 +48,7 @@ class SelectFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.select.setOnClickListener {
-            Toast.makeText(
-                context,
-                "Η εφαρμογή μπορεί να επεξεργαστεί μόνο αρχεία ήχου .wav",
-                Toast.LENGTH_LONG
-            ).show()
+            popup()
             val intent = Intent(Intent.ACTION_GET_CONTENT)
             intent.type = "audio/*"
             startActivityForResult(intent, 1)
@@ -72,8 +68,7 @@ class SelectFragment : Fragment() {
                 sharedViewModel.setModelUri(fullSoundUri)
             }
             findNavController().navigate(R.id.action_SelectFragment_to_SoundFragment)
-        }
-        else if (requestCode == REQUEST_SOUND_CAPTURE && resultCode == Activity.RESULT_OK) {
+        } else if (requestCode == REQUEST_SOUND_CAPTURE && resultCode == Activity.RESULT_OK) {
             findNavController().navigate(R.id.action_SelectFragment_to_SoundFragment)
         }
     }
@@ -81,6 +76,15 @@ class SelectFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun popup() {
+            Toast.makeText(
+                context,
+                "Η εφαρμογή μπορεί να επεξεργαστεί μόνο αρχεία ήχου .wav",
+                Toast.LENGTH_LONG
+            ).show()
+
     }
 }
 
