@@ -40,10 +40,12 @@
         android:id="@+id/progress"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="24dp"
         android:layout_marginTop="106dp"
+        android:layout_marginEnd="24dp"
         android:visibility="invisible"
         app:layout_constraintBottom_toTopOf="@+id/Diagnosis"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/play" />
 
@@ -92,41 +94,13 @@
         app:layout_constraintTop_toBottomOf="@+id/play"
         app:layout_constraintVertical_bias="0.0" />
 
-    <RadioGroup
-        android:id="@+id/radioGroup"
-        android:layout_width="248dp"
-        android:layout_height="123dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginBottom="100dp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/soundType"
-        app:layout_constraintTop_toTopOf="@+id/soundType"
-        app:layout_constraintVertical_bias="0.0">
-
-        <RadioButton
-            android:id="@+id/cough"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:checked="true"
-            android:text="@string/cough" />
-
-        <RadioButton
-            android:id="@+id/breathing"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:checked="false"
-            android:text="@string/breathing" />
-    </RadioGroup>
 
     <Button
         android:id="@+id/Diagnosis"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
-        android:layout_marginBottom="10dp"
+        android:layout_marginBottom="44dp"
         android:text="@string/diagnosis"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

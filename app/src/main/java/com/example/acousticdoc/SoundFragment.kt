@@ -283,11 +283,9 @@ class SoundFragment : Fragment() {
     }
 
      private fun startMusic() {
-         val fullSoundUri = sharedViewModel.getModelUri()
          mediaPlayer.start()
          playing = 0
          binding.play.setText(R.string.pause)
-         Log.d("URI","URI $fullSoundUri")
      }
 
     //Hack to get funky file name from URI
