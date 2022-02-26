@@ -1,6 +1,6 @@
 # AcousticDoc
 
-This application is part of a project in the course "Technology of Sound" at Aristotle University of Thessaloniki 2021. We use machine learning to determine the posibility a patient is ill by evaluating their breathing and/or coughing sound samples. 
+This application is part of a project in the course "Technology of Sound" at Aristotle University of Thessaloniki 2021. We use machine learning to determine the posibility a patient is ill by evaluating their breathing and/or coughing sound samples. You can download the application [here](https://drive.google.com/file/d/1lgAzFvRnJ1-IxQt5-DlQ7ka4ijJpra72/view?usp=sharing)
 
 ## Android Libraries and Frameworks used:
 * Android JetPack Navigation
