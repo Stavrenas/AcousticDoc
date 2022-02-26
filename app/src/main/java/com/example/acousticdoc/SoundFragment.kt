@@ -219,7 +219,7 @@ class SoundFragment : Fragment() {
 
             val coughProbability = coughTensorLabel?.mapWithFloatValue?.get("Cough")!!
             //if the file contains a cough, extract features for covid detection
-            if (coughProbability > 0.7) {
+            if (coughProbability > 0.5f) {
                 coughFiles += 1
                 try {
                     val features = module.callAttr("extract", slicedContent).toJava(FloatArray::class.java)
@@ -250,13 +250,15 @@ class SoundFragment : Fragment() {
                     }
 
                 // getting the first label (Healthy) probability
-                probability += tensorLabel?.mapWithFloatValue?.get("Healthy")!!
+                val prob =  tensorLabel?.mapWithFloatValue?.get("Healthy")!!
+                probability +=prob
+                Log.d("Prob",prob.toString())
             }
 
         }
 
         if(coughFiles > 0)
-            probability /= (coughFiles+1)
+            probability /= coughFiles
         else
             probability = -1f
 
