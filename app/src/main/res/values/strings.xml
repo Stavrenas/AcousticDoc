@@ -25,7 +25,8 @@
     <string name="results">Το αποτέλεσμα της διάγνωσης</string>
     <string name="healthy">Υγιές</string>
     <string name="unhealthy">Μη υγιές</string>
-    <string name="probability">Πιθανότητα υγιούς διάγνωσης:</string>
+    <string name="positive_probability">Πιθανότητα υγιούς διάγνωσης:</string>
+    <string name="negative_probability">Πιθανότητα μη υγιούς διάγνωσης:</string>
 
 
 </resources>

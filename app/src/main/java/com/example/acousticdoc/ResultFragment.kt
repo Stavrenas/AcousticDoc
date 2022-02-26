@@ -34,14 +34,18 @@ class ResultFragment: Fragment() {
             if (probability > 0.5F){
                 binding.health.setText(R.string.healthy)
                 binding.health.setTextColor(Color.GREEN)
+                binding.probText.setText(R.string.positive_probability)
             }
             else if (probability < 0.5F){
+                probability = 1-probability
                 binding.health.setText(R.string.unhealthy)
                 binding.health.setTextColor(Color.RED)
+                binding.probText.setText(R.string.negative_probability)
             }
         }
         //Enable this to display probability on result screen
-        //binding.prob.text = probability!!.toString()
+        binding.prob.text = probability!!.toString()
+        binding.probText.visibility=View.VISIBLE
     }
 
 }
