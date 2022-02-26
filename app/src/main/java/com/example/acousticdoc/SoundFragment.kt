@@ -224,7 +224,7 @@ class SoundFragment : Fragment() {
                     for (i in 0 until numFeatures) {  byteBuffer.putFloat(i, features[i]) }
                     inputFeature0.loadBuffer(byteBuffer)
                 } catch (e: PyException) {
-                    Toast.makeText(context, e.message, Toast.LENGTH_LONG).show()
+                    e.message?.let { Log.d("Python", it) }
                 }
 
 //                for (i in 0 until numFeatures) {

@@ -57,7 +57,7 @@ class MainActivity : AppCompatActivity() {
         requestMultiplePermissions.launch(perms)
 
         //Start python
-        if (! Python.isStarted()) {
+        if (!Python.isStarted()) {
             Python.start( AndroidPlatform(this))
         }
     }
