@@ -223,14 +223,14 @@ class SoundFragment : Fragment() {
                     val features = module.callAttr("extract", slicedContent).toJava(FloatArray::class.java)
                     for (i in 0 until numFeatures) {  byteBuffer.putFloat(i, features[i]) }
                     inputFeature0.loadBuffer(byteBuffer)
+                    for (i in 0 until numFeatures) {
+                        val s = byteBuffer[i].toFloat()
+                        Log.d("Out", "$s")
+                    }
                 } catch (e: PyException) {
                     e.message?.let { Log.d("Python", it) }
                 }
 
-//                for (i in 0 until numFeatures) {
-//                    val s = byteBuffer[i]
-//                    Log.d("Out", "$s")
-//                }
 
                 val outputs = model?.process(inputFeature0)
                 val outputBuffer = outputs?.outputFeature0AsTensorBuffer
