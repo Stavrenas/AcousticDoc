@@ -144,7 +144,6 @@ class SoundFragment : Fragment() {
         val numFeatures = 270
         val inputFeature0 =
             TensorBuffer.createFixedSize(intArrayOf(1, numFeatures), DataType.FLOAT32)
-        val byteBuffer = inputFeature0.buffer
         val model = context?.let { Model.newInstance(it) }
         var probability = 0f
 
@@ -187,14 +186,17 @@ class SoundFragment : Fragment() {
             val coughCheckNumFeatures = 40
             val inputFeature1 =
                 TensorBuffer.createFixedSize(intArrayOf(1, coughCheckNumFeatures), DataType.FLOAT32)
-            val byteBuffer1 = inputFeature1.buffer
             val model1 = context?.let { it1 -> CoughCheck.newInstance(it1) }
 
             //extract audio features
             try {
-                val coughCheckFeatures =module.callAttr("features_extractor_cough_check", slicedContent).toJava(FloatArray::class.java)
-                for (i in 0 until coughCheckNumFeatures) {byteBuffer1.putFloat(i,coughCheckFeatures[i])}
-                inputFeature1.loadBuffer(byteBuffer1)
+                val coughCheckFeatures = module.callAttr("features_extractor_cough_check", slicedContent).toJava(FloatArray::class.java)
+                inputFeature1.loadArray(coughCheckFeatures)
+                for(i in 0 until coughCheckNumFeatures){
+                    val p = inputFeature1.getFloatValue(i)
+                    val s = coughCheckFeatures[i]
+                    Log.d("Out","feat is $s tensor is $p")
+                }
             } catch (e: PyException) {
                 Toast.makeText(context, e.message, Toast.LENGTH_LONG).show()
             }
@@ -221,12 +223,13 @@ class SoundFragment : Fragment() {
                 coughFiles += 1
                 try {
                     val features = module.callAttr("extract", slicedContent).toJava(FloatArray::class.java)
-                    for (i in 0 until numFeatures) {  byteBuffer.putFloat(i, features[i]) }
-                    inputFeature0.loadBuffer(byteBuffer)
-                    for (i in 0 until numFeatures) {
-                        val s = byteBuffer[i].toFloat()
-                        Log.d("Out", "$s")
+                    inputFeature0.loadArray(features)
+                    for(i in 0 until numFeatures){
+                        val p = inputFeature0.getFloatValue(i)
+                        val s = features[i]
+                        Log.d("Out","feat is $s tensor is $p")
                     }
+
                 } catch (e: PyException) {
                     e.message?.let { Log.d("Python", it) }
                 }
