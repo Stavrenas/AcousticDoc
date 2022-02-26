@@ -112,7 +112,6 @@ class SoundFragment : Fragment() {
                 withContext(Dispatchers.Main) {
 
                     val probability = sharedViewModel.getProbability()
-                    Toast.makeText(context, "Prob is $probability", Toast.LENGTH_LONG).show()
 
                     if (probability != null) {
                         if (probability >= 0) {
