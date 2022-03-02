@@ -6,10 +6,18 @@ plugins {
 }
 
 android {
+    signingConfigs {
+        debug {
+            storeFile file('/home/stavros/AndroidStudioProjects/KeyStore.jks')
+            storePassword '6977527381'
+            keyPassword '6977527381'
+            keyAlias 'key_release'
+        }
+    }
     compileSdk 31
 
     defaultConfig {
-        applicationId "com.example.acousticdoc"
+        applicationId "com.acousticdoc.acousticdoc"
         minSdk 22
         targetSdk 30
         versionCode 1
