@@ -144,8 +144,16 @@ class SoundFragment : Fragment() {
         val numFeatures = 270
         val inputFeature0 =
             TensorBuffer.createFixedSize(intArrayOf(1, numFeatures), DataType.FLOAT32)
+        val byteBuffer = inputFeature0.buffer
         val model = context?.let { Model.newInstance(it) }
         var probability = 0f
+
+        //create cough detection model and input buffer
+        val coughCheckNumFeatures = 40
+        val inputFeature1 =
+            TensorBuffer.createFixedSize(intArrayOf(1, coughCheckNumFeatures), DataType.FLOAT32)
+        val byteBuffer1 = inputFeature1.buffer
+        val model1 = context?.let { it1 -> CoughCheck.newInstance(it1) }
 
 
         //create Filename to pass to the python function to create mulitple audio files containing a cough each
@@ -157,12 +165,44 @@ class SoundFragment : Fragment() {
             filename = array[0]
         }
 
+        val stream = uri?.let { it1 -> context?.contentResolver?.openInputStream(it1) }
+        val content = stream?.readBytes()
+
+        //extract audio features
+        try {
+            val coughCheckFeatures =module.callAttr("features_extractor_cough_check", content).toJava(FloatArray::class.java)
+            for (i in 0 until coughCheckNumFeatures) {byteBuffer1.putFloat(i,coughCheckFeatures[i])}
+            inputFeature1.loadBuffer(byteBuffer1)
+        } catch (e: PyException) {
+            Toast.makeText(context, e.message, Toast.LENGTH_LONG).show()
+        }
+
+        //run inference
+        val coughOutputs = model1?.process(inputFeature1)
+        val coughOutputBuffer = coughOutputs?.outputFeature0AsTensorBuffer
+
+        // adding labels to the output
+        val coughTensorLabel =
+            coughOutputBuffer?.let { it1 ->
+                TensorLabel(
+                    arrayListOf(
+                        "Cough",
+                        "Not Cough"
+                    ), it1
+                )
+            }
+
+
+        val coughProbability = coughTensorLabel?.mapWithFloatValue?.get("Cough")!!
+        val notCoughProbability = coughTensorLabel.mapWithFloatValue["Not Cough"]!!
+
+        if(notCoughProbability > coughProbability)
+            probability = -1f
+
 
         //find total files containing a cough each
         var files = 0
         try {
-            val stream = uri?.let { it1 -> context?.contentResolver?.openInputStream(it1) }
-            val content = stream?.readBytes()
             files = module.callAttr("cough_save", content, filename).toInt()
         } catch (e: PyException) {
             Toast.makeText(context, e.message, Toast.LENGTH_LONG).show()
@@ -182,58 +222,46 @@ class SoundFragment : Fragment() {
             val slicedContent = slicedStream?.readBytes()
 
 
-            //create cough detection model and input buffer
-            val coughCheckNumFeatures = 40
-            val inputFeature1 =
-                TensorBuffer.createFixedSize(intArrayOf(1, coughCheckNumFeatures), DataType.FLOAT32)
-            val model1 = context?.let { it1 -> CoughCheck.newInstance(it1) }
-
             //extract audio features
             try {
-                val coughCheckFeatures = module.callAttr("features_extractor_cough_check", slicedContent).toJava(FloatArray::class.java)
-                inputFeature1.loadArray(coughCheckFeatures)
-                for(i in 0 until coughCheckNumFeatures){
-                    val p = inputFeature1.getFloatValue(i)
-                    val s = coughCheckFeatures[i]
-                    Log.d("Out","feat is $s tensor is $p")
-                }
+                val coughCheckFeatures =module.callAttr("features_extractor_cough_check", slicedContent).toJava(FloatArray::class.java)
+                for (i in 0 until coughCheckNumFeatures) {byteBuffer1.putFloat(i,coughCheckFeatures[i])}
+                inputFeature1.loadBuffer(byteBuffer1)
             } catch (e: PyException) {
                 Toast.makeText(context, e.message, Toast.LENGTH_LONG).show()
             }
 
             //run inference
-            val coughOutputs = model1?.process(inputFeature1)
-            val coughOutputBuffer = coughOutputs?.outputFeature0AsTensorBuffer
+            val coughOutputs = model1.process(inputFeature1)
+            val coughOutputBuffer = coughOutputs.outputFeature0AsTensorBuffer
 
             // adding labels to the output
             val coughTensorLabel =
-                coughOutputBuffer?.let { it1 ->
-                    TensorLabel(
-                        arrayListOf(
-                            "Cough",
-                            "Not Cough"
-                        ), it1
-                    )
-                }
+                TensorLabel(
+                    arrayListOf(
+                        "Cough",
+                        "Not Cough"
+                    ), coughOutputBuffer
+                )
 
 
-            val coughProbability = coughTensorLabel?.mapWithFloatValue?.get("Cough")!!
+            val coughProbability = coughTensorLabel.mapWithFloatValue["Cough"]!!
+            val notCoughProbability = coughTensorLabel.mapWithFloatValue["Not Cough"]!!
             //if the file contains a cough, extract features for covid detection
-            if (coughProbability > 0.5f) {
+            if (coughProbability > 0.7 && coughProbability > notCoughProbability) {
                 coughFiles += 1
                 try {
                     val features = module.callAttr("extract", slicedContent).toJava(FloatArray::class.java)
-                    inputFeature0.loadArray(features)
-                    for(i in 0 until numFeatures){
-                        val p = inputFeature0.getFloatValue(i)
-                        val s = features[i]
-                        Log.d("Out","feat is $s tensor is $p")
-                    }
-
+                    for (i in 0 until numFeatures) {  byteBuffer.putFloat(i, features[i]) }
+                    inputFeature0.loadBuffer(byteBuffer)
                 } catch (e: PyException) {
-                    e.message?.let { Log.d("Python", it) }
+                    Toast.makeText(context, e.message, Toast.LENGTH_LONG).show()
                 }
 
+//                for (i in 0 until numFeatures) {
+//                    val s = byteBuffer[i]
+//                    Log.d("Out", "$s")
+//                }
 
                 val outputs = model?.process(inputFeature0)
                 val outputBuffer = outputs?.outputFeature0AsTensorBuffer
@@ -250,20 +278,19 @@ class SoundFragment : Fragment() {
                     }
 
                 // getting the first label (Healthy) probability
-                val prob =  tensorLabel?.mapWithFloatValue?.get("Healthy")!!
-                probability +=prob
-                Log.d("Prob",prob.toString())
+                probability += tensorLabel?.mapWithFloatValue?.get("Healthy")!!
             }
 
         }
 
         if(coughFiles > 0)
-            probability /= coughFiles
+            probability /= (coughFiles+1)
         else
             probability = -1f
 
         return probability
     }
+
 
     private fun toggle(){
             if (playing == 1){
