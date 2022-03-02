@@ -1,4 +1,4 @@
-package com.example.acousticdoc
+package com.acousticdoc.acousticdoc
 
 import AcousticDoc.R
 import AcousticDoc.databinding.FragmentSelectBinding

@@ -1,4 +1,4 @@
-package com.example.acousticdoc
+package com.acousticdoc.acousticdoc
 
 import android.net.Uri
 import androidx.lifecycle.LiveData

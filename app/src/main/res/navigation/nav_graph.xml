@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/SelectFragment"
-        android:name="com.example.acousticdoc.SelectFragment"
+        android:name="com.acousticdoc.acousticdoc.SelectFragment"
         android:label="@string/select_fragment_label"
         tools:layout="@layout/fragment_select">
 
@@ -36,7 +36,7 @@
 </fragment>
     <fragment
         android:id="@+id/SoundFragment"
-        android:name="com.example.acousticdoc.SoundFragment"
+        android:name="com.acousticdoc.acousticdoc.SoundFragment"
         android:label="@string/sound_fragment_label"
         tools:layout="@layout/fragment_sound">
 
@@ -58,7 +58,7 @@
     </fragment>
     <fragment
         android:id="@+id/RecordFragment"
-        android:name="com.example.acousticdoc.RecordFragment"
+        android:name="com.acousticdoc.acousticdoc.RecordFragment"
         android:label="@string/record_fragment_label"
         tools:layout="@layout/fragment_record">
 
@@ -97,7 +97,7 @@
 
     <fragment
         android:id="@+id/ResultFragment"
-        android:name="com.example.acousticdoc.ResultFragment"
+        android:name="com.acousticdoc.acousticdoc.ResultFragment"
         android:label="@string/result_fragment_label"
         tools:layout="@layout/fragment_result">
 

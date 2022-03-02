@@ -16,7 +16,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.acousticdoc">
         <activity
-            android:name="com.example.acousticdoc.MainActivity"
+            android:name="com.acousticdoc.acousticdoc.MainActivity"
             android:exported="true"
             android:theme="@style/Theme.acousticdoc.NoActionBar">
             <intent-filter>

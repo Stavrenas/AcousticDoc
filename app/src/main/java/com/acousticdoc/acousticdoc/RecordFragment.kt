@@ -1,4 +1,4 @@
-package com.example.acousticdoc
+package com.acousticdoc.acousticdoc
 
 import AcousticDoc.databinding.FragmentRecordBinding
 import android.os.Bundle
@@ -15,12 +15,9 @@ import android.text.TextWatcher
 
 
 import android.widget.EditText
-import android.widget.Toast
 
-import android.media.MediaRecorder
 import android.net.Uri
 import android.os.Build
-import android.os.Environment
 import androidx.annotation.RequiresApi
 import androidx.navigation.fragment.findNavController
 import java.io.File
