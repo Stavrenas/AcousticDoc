@@ -30,9 +30,7 @@ import org.tensorflow.lite.DataType
 import org.tensorflow.lite.support.label.TensorLabel
 import org.tensorflow.lite.support.tensorbuffer.TensorBuffer
 import java.io.File
-import java.lang.Runnable
 import java.net.URLDecoder.decode
-import java.util.concurrent.Callable
 
 
 /**
@@ -154,7 +152,7 @@ class SoundFragment : Fragment() {
         val model1 = context?.let { it1 -> CoughCheck.newInstance(it1) }
 
 
-        //create Filename to pass to the python function to create mulitple audio files containing a cough each
+        //create Filename to pass to the python function to create multiple audio files containing a cough each
         var filename = ""
         val uri = sharedViewModel.getModelUri()
         if (uri != null) {
@@ -175,11 +173,11 @@ class SoundFragment : Fragment() {
         }
 
         //run inference
-        val coughOutputs = model1?.process(inputFeature1)
-        val coughOutputBuffer = coughOutputs?.outputFeature0AsTensorBuffer
+        var coughOutputs = model1?.process(inputFeature1)
+        var coughOutputBuffer = coughOutputs?.outputFeature0AsTensorBuffer
 
         // adding labels to the output
-        val coughTensorLabel =
+        var coughTensorLabel =
             coughOutputBuffer?.let { it1 ->
                 TensorLabel(
                     arrayListOf(
@@ -189,8 +187,8 @@ class SoundFragment : Fragment() {
                 )
             }
 
-        val coughProbability = coughTensorLabel?.mapWithFloatValue?.get("Cough")!!
-        val notCoughProbability = coughTensorLabel.mapWithFloatValue["Not Cough"]!!
+        var coughProbability = coughTensorLabel?.mapWithFloatValue?.get("Cough")!!
+        var notCoughProbability = coughTensorLabel.mapWithFloatValue["Not Cough"]!!
 
         Log.d("Prob","Cough $coughProbability , not cough $notCoughProbability")
 
@@ -228,21 +226,29 @@ class SoundFragment : Fragment() {
                 }
 
                 //run inference
-                val coughOutputs = model1.process(inputFeature1)
-                val coughOutputBuffer = coughOutputs.outputFeature0AsTensorBuffer
+                if (model1 != null) {
+                    coughOutputs = model1.process(inputFeature1)
+                }
+                if (coughOutputs != null) {
+                    coughOutputBuffer = coughOutputs.outputFeature0AsTensorBuffer
+                }
 
                 // adding labels to the output
-                val coughTensorLabel =
-                    TensorLabel(
-                        arrayListOf(
-                            "Cough",
-                            "Not Cough"
-                        ), coughOutputBuffer
-                    )
+                coughTensorLabel =
+                    coughOutputBuffer?.let {
+                        TensorLabel(
+                            arrayListOf(
+                                "Cough",
+                                "Not Cough"
+                            ), it
+                        )
+                    }
 
 
-                val coughProbability = coughTensorLabel.mapWithFloatValue["Cough"]!!
-                val notCoughProbability = coughTensorLabel.mapWithFloatValue["Not Cough"]!!
+                if (coughTensorLabel != null) {
+                    coughProbability = coughTensorLabel.mapWithFloatValue["Cough"]!!
+                    notCoughProbability = coughTensorLabel.mapWithFloatValue["Not Cough"]!!
+                }
                 Log.d("Prob","Cough $coughProbability , not cough $notCoughProbability file $coughFiles")
 
                 //if the file contains a cough, extract features for covid detection
