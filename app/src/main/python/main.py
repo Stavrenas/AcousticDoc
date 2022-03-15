@@ -3,8 +3,8 @@ import librosa
 import tempfile
 import numpy as np
 from scipy import stats
-from com.chaquo.python import Python
 from numpy.random import randn
+from com.chaquo.python import Python
 from scipy.io.wavfile import write
 
 def extract(content):
@@ -178,21 +178,21 @@ def extract(content):
         mfcc_delta = librosa.feature.delta(mfcc)
         features = []
         features.extend([np.mean(chroma_stft), np.std(chroma_stft), np.var(chroma_stft), stats.skew(chroma_stft,axis=None), stats.kurtosis(chroma_stft,axis=None),
-               np.mean(spec_cent), np.std(spec_cent), np.var(spec_cent), stats.skew(spec_cent,axis=None), stats.kurtosis(spec_cent,axis=None), 
-               np.mean(spec_bw), np.std(spec_bw), np.var(spec_bw), stats.skew(spec_bw,axis=None), stats.kurtosis(spec_bw,axis=None), 
-               np.mean(rolloff), np.std(rolloff), np.var(rolloff), stats.skew(rolloff,axis=None), stats.kurtosis(rolloff,axis=None), 
-               np.mean(zcr), np.std(zcr), np.var(zcr), stats.skew(zcr,axis=None), stats.kurtosis(zcr,axis=None), 
-               np.mean(spec_flat), np.std(spec_flat), np.var(spec_flat), stats.skew(spec_flat,axis=None), stats.kurtosis(spec_flat,axis=None), 
+               np.mean(spec_cent), np.std(spec_cent), np.var(spec_cent), stats.skew(spec_cent,axis=None), stats.kurtosis(spec_cent,axis=None),
+               np.mean(spec_bw), np.std(spec_bw), np.var(spec_bw), stats.skew(spec_bw,axis=None), stats.kurtosis(spec_bw,axis=None),
+               np.mean(rolloff), np.std(rolloff), np.var(rolloff), stats.skew(rolloff,axis=None), stats.kurtosis(rolloff,axis=None),
+               np.mean(zcr), np.std(zcr), np.var(zcr), stats.skew(zcr,axis=None), stats.kurtosis(zcr,axis=None),
+               np.mean(spec_flat), np.std(spec_flat), np.var(spec_flat), stats.skew(spec_flat,axis=None), stats.kurtosis(spec_flat,axis=None),
                np.mean(spec_contr), np.std(spec_contr), np.var(spec_contr), stats.skew(spec_contr,axis=None), stats.kurtosis(spec_contr,axis=None)])
         for e in mfcc:
             features.extend( [np.mean(e), np.std(e), np.var(e), stats.skew(e,axis=None), stats.kurtosis(e,axis=None)])
 
         features.extend([ np.mean(chroma_delta), np.std(chroma_delta), np.var(chroma_delta), stats.skew(chroma_delta,axis=None), stats.kurtosis(chroma_delta,axis=None),
-               np.mean(cent_delta), np.std(cent_delta), np.var(cent_delta), stats.skew(cent_delta,axis=None), stats.kurtosis(cent_delta,axis=None), 
-               np.mean(bw_delta), np.std(bw_delta), np.var(bw_delta), stats.skew(bw_delta,axis=None), stats.kurtosis(bw_delta,axis=None), 
-               np.mean(rolloff_delta), np.std(rolloff_delta), np.var(rolloff_delta), stats.skew(rolloff_delta,axis=None), stats.kurtosis(rolloff_delta,axis=None), 
-               np.mean(zcr_delta), np.std(zcr_delta), np.var(zcr_delta), stats.skew(zcr_delta,axis=None), stats.kurtosis(zcr_delta,axis=None), 
-               np.mean(flat_delta), np.std(flat_delta), np.var(flat_delta), stats.skew(flat_delta,axis=None), stats.kurtosis(flat_delta,axis=None), 
+               np.mean(cent_delta), np.std(cent_delta), np.var(cent_delta), stats.skew(cent_delta,axis=None), stats.kurtosis(cent_delta,axis=None),
+               np.mean(bw_delta), np.std(bw_delta), np.var(bw_delta), stats.skew(bw_delta,axis=None), stats.kurtosis(bw_delta,axis=None),
+               np.mean(rolloff_delta), np.std(rolloff_delta), np.var(rolloff_delta), stats.skew(rolloff_delta,axis=None), stats.kurtosis(rolloff_delta,axis=None),
+               np.mean(zcr_delta), np.std(zcr_delta), np.var(zcr_delta), stats.skew(zcr_delta,axis=None), stats.kurtosis(zcr_delta,axis=None),
+               np.mean(flat_delta), np.std(flat_delta), np.var(flat_delta), stats.skew(flat_delta,axis=None), stats.kurtosis(flat_delta,axis=None),
                np.mean(contr_delta), np.std(contr_delta), np.var(contr_delta), stats.skew(contr_delta,axis=None), stats.kurtosis(contr_delta,axis=None)])
 
         for e in mfcc_delta:
@@ -202,124 +202,282 @@ def extract(content):
         return features
 
 
+def features_extractor_cough_check(content):
+
+    with tempfile.NamedTemporaryFile() as temp_file:
+
+        mean = [3.98488395e-01,3.11825427e-01,9.91868190e-02,5.67493482e-01
+            ,-6.50797862e-01,1.80675779e+03,9.24492246e+02,1.00287867e+06
+            ,1.17187203e+00,2.29458496e+00,1.76004117e+03,5.19789975e+02
+            ,3.12269474e+05,2.50249915e-01,-5.01709423e-03,3.43543911e+03
+            ,1.70212163e+03,3.28568749e+06,4.61927576e-01,1.86442260e-01
+            ,1.05042094e-01,7.62678579e-02,7.77752639e-03,1.34434878e+00
+            ,2.74643407e+00,7.53232372e-02,7.91555211e-02,2.41729363e-02
+            ,3.36436336e+00,2.12846290e+01,1.96662543e+01,8.59410055e+00
+            ,8.52105526e+01,9.98157140e-01,9.06881246e-01,-3.77536081e+02
+            ,1.19650553e+02,1.68302067e+04,6.33380670e-03,-3.59597607e-01
+            ,9.28489299e+01,4.89842589e+01,2.72855787e+03,-1.23762315e-01
+            ,-1.56896674e-01,-1.19085170e+01,3.24400821e+01,1.19715718e+03
+            ,-2.62893758e-01,1.57567637e-02,2.77226183e+01,2.42019390e+01
+            ,6.73164289e+02,3.72023399e-01,2.42651651e-01,-3.64210574e+00
+            ,2.15543909e+01,5.29160890e+02,-4.44853283e-01,3.74563592e-01
+            ,5.44228861e+00,1.78228757e+01,3.62802525e+02,-4.38210018e-02
+            ,3.91586734e-01,-9.24488952e+00,1.59402809e+01,2.89490331e+02
+            ,-2.87284643e-01,4.51522608e-02,-6.56718137e+00,1.44633457e+01
+            ,2.36158468e+02,-3.02432161e-01,1.42882312e-01,-7.15617492e+00
+            ,1.26659304e+01,1.77952000e+02,-3.30405405e-01,1.19640965e-01
+            ,-2.43201340e+00,1.13501873e+01,1.44026163e+02,-2.49912725e-01
+            ,2.53895522e-01,-2.45999383e+00,1.06020515e+01,1.25424443e+02
+            ,-2.11417388e-01,3.15171022e-01,-3.49349029e+00,9.62165842e+00
+            ,1.02639763e+02,-1.59464445e-01,1.93140783e-01,4.21725627e-02
+            ,9.15236896e+00,9.29546779e+01,-8.37754855e-02,3.51275802e-01
+            ,-1.79281986e+00,8.78987872e+00,8.59683949e+01,-1.46852672e-01
+            ,2.49718577e-01,3.38154798e-01,8.10966659e+00,7.25302153e+01
+            ,-8.87665881e-02,3.94178658e-01,-3.45511518e+00,8.26459318e+00
+            ,7.59795704e+01,-2.08383429e-01,1.96286073e-01,-2.83277707e+00
+            ,7.89709742e+00,6.96210073e+01,-1.96231023e-01,3.15762633e-01
+            ,-2.08937445e+00,7.44278197e+00,6.21634231e+01,-2.10373212e-01
+            ,2.87324823e-01,-3.12912557e+00,7.34100530e+00,6.05521082e+01
+            ,-1.54608831e-01,2.96764464e-01,-7.53831815e-01,7.09690912e+00
+            ,5.71684669e+01,-8.17619548e-02,4.31953992e-01,-3.05932084e-05
+            ,5.26602844e-02,2.85944043e-03,-1.29884832e-02,1.86564773e-01
+            ,-6.62068874e-01,1.73306246e+02,3.59757057e+04,-6.31231786e-02
+            ,1.02640501e+00,1.19372676e+00,9.36561817e+01,1.01684395e+04
+            ,-6.97365825e-02,3.94718078e-01,1.28691695e+00,3.14679287e+02
+            ,1.14818163e+05,-4.10628488e-02,3.12676751e-01,-2.49171883e-05
+            ,1.45309632e-02,2.76888325e-04,-3.50319235e-02,1.54606813e+00
+            ,-5.31215458e-05,1.17125389e-02,5.04822803e-04,-4.15100043e-01
+            ,7.15576387e+00,-2.31051046e-02,8.78913337e-01,8.30125926e-01
+            ,2.60870951e-02,2.32047212e+00,-6.24549816e-01,1.89370624e+01
+            ,4.50940845e+02,4.94046007e-01,8.36291086e-01,-1.25122025e-01
+            ,8.89011347e+00,9.16985977e+01,1.18557575e-01,5.30836145e-01
+            ,1.20227743e-01,6.09224253e+00,4.33548156e+01,-4.43002697e-02
+            ,2.39104905e-01,-2.67522795e-02,4.56096991e+00,2.42502776e+01
+            ,5.26788192e-02,3.38411469e-01,8.23606656e-02,4.02910512e+00
+            ,1.87775646e+01,-3.22196606e-02,3.99937388e-01,-2.68042936e-02
+            ,3.40309730e+00,1.35266151e+01,-1.76153859e-03,3.85780491e-01
+            ,3.53161092e-02,2.85546636e+00,9.51398612e+00,-5.67311226e-02
+            ,2.68265222e-01,1.03832333e-02,2.57760986e+00,7.56174656e+00
+            ,-4.00804706e-02,2.62808143e-01,2.49147200e-02,2.28191777e+00
+            ,5.91355125e+00,-4.55354332e-02,2.51213887e-01,4.82402077e-03
+            ,2.10469971e+00,5.06451105e+00,-1.94022962e-02,2.19113110e-01
+            ,-8.30115719e-03,1.94537809e+00,4.30075175e+00,-3.74772618e-02
+            ,2.75809280e-01,1.50080754e-02,1.76217544e+00,3.51372200e+00
+            ,-9.67656349e-03,2.29362989e-01,-2.12713912e-02,1.70942194e+00
+            ,3.33622843e+00,-4.40924634e-02,2.15954278e-01,9.41574518e-03
+            ,1.60725044e+00,2.94371649e+00,-1.15089445e-02,2.03721820e-01
+            ,-1.06753905e-02,1.49007966e+00,2.50751105e+00,-2.58168631e-02
+            ,2.68395665e-01,7.43918211e-03,1.49636461e+00,2.56342873e+00
+            ,-3.32380704e-02,2.16967389e-01,-4.00845847e-03,1.44676191e+00
+            ,2.39917016e+00,-1.51995379e-05,2.14218102e-01,7.22263375e-03
+            ,1.35526437e+00,2.12771069e+00,-1.96174767e-02,1.99765619e-01
+            ,3.57392658e-04,1.32155513e+00,2.02328514e+00,-3.40233952e-02
+            ,2.33558160e-01,8.32782488e-03,1.30769765e+00,1.98687941e+00
+            ,-1.58464314e-02,2.22833724e-01]
+
+
+        std = [1.27512344e-02, 1.95172204e-03, 3.92770731e-04, 3.08797778e-01
+            , 6.66135692e+00, 4.70387392e+05, 1.48192760e+05, 5.88421649e+11
+            , 9.83253408e-01, 2.33217622e+01, 2.73809918e+05, 4.20878559e+04
+            , 5.38018071e+10, 5.38643997e-01, 6.11255969e+00, 1.64055191e+06
+            , 3.88469436e+05, 4.11124779e+12, 6.99795547e-01, 7.37506876e+00
+            , 6.21215844e-03, 1.96074025e-03, 9.51917125e-05, 1.26807153e+00
+            , 1.98784591e+01, 3.21424385e-02, 1.79073397e-02, 3.52025351e-03
+            , 9.12316144e+00, 2.86310191e+03, 1.19664205e+01, 1.13519883e+01
+            , 5.75646381e+03, 4.93743720e-01, 2.30242857e+01, 3.02803356e+04
+            , 2.51395188e+03, 1.54200644e+08, 7.29815264e-01, 1.20627379e+01
+            , 1.15966939e+03, 3.29100247e+02, 2.96431481e+06, 5.79625610e-01
+            , 7.01948082e+00, 7.29932937e+02, 1.44798249e+02, 6.62234786e+05
+            , 4.82346269e-01, 6.28686819e+00, 3.18718625e+02, 8.74304382e+01
+            , 2.55935380e+05, 4.82737768e-01, 1.46053916e+01, 4.20800665e+02
+            , 6.45691230e+01, 1.34111371e+05, 5.23596067e-01, 1.17669755e+01
+            , 1.79891697e+02, 4.51476273e+01, 6.73514691e+04, 6.22453666e-01
+            , 1.02113503e+01, 1.99622259e+02, 3.53977751e+01, 4.75037926e+04
+            , 4.40304391e-01, 6.66547187e+00, 8.71347875e+01, 2.69700992e+01
+            , 2.41430146e+04, 4.52397625e-01, 9.03309385e+00, 8.95737010e+01
+            , 1.75262077e+01, 1.26263837e+04, 4.35871747e-01, 6.07609259e+00
+            , 9.33825080e+01, 1.51994108e+01, 8.84652580e+03, 4.47295360e-01
+            , 8.81400692e+00, 5.32019017e+01, 1.30209480e+01, 6.49708651e+03
+            , 4.89852925e-01, 1.13871804e+01, 8.15248982e+01, 1.00634526e+01
+            , 4.51339943e+03, 4.80154027e-01, 9.37174533e+00, 3.77013263e+01
+            , 9.18882050e+00, 3.57527174e+03, 4.58427084e-01, 1.09367474e+01
+            , 9.08639962e+01, 8.70642692e+00, 3.14938076e+03, 4.54809539e-01
+            , 9.79210978e+00, 3.58967785e+01, 6.76352326e+00, 1.99860229e+03
+            , 4.63118920e-01, 9.95629596e+00, 4.25021208e+01, 7.67606983e+00
+            , 2.64661610e+03, 4.47015678e-01, 9.96721041e+00, 2.33744995e+01
+            , 7.25685964e+00, 2.74197154e+03, 4.64989546e-01, 1.06749685e+01
+            , 2.49717474e+01, 6.76841961e+00, 2.51459528e+03, 4.66698857e-01
+            , 9.71850326e+00, 1.80935523e+01, 6.66174932e+00, 2.37787786e+03
+            , 4.36944003e-01, 1.08200459e+01, 2.63344937e+01, 6.80234792e+00
+            , 2.44110552e+03, 4.79141204e-01, 1.19925662e+01, 1.96519325e-05
+            , 8.63348709e-05, 6.42316239e-07, 5.85385752e-02, 2.08910907e+00
+            , 6.72727205e+02, 5.94065087e+03, 8.71668883e+08, 2.92017549e-01
+            , 4.79257787e+00, 2.50917320e+02, 1.39695918e+03, 6.48448626e+07
+            , 3.66623820e-01, 5.02361283e+00, 2.19952316e+03, 1.57951094e+04
+            , 6.51560547e+09, 2.72086200e-01, 3.77009672e+00, 4.93519622e-06
+            , 6.57394324e-05, 9.51515067e-08, 2.98479172e-01, 7.24552238e+00
+            , 3.23090562e-05, 3.67639238e-04, 1.98701588e-06, 4.43449235e+00
+            , 2.42830243e+02, 4.72692671e-03, 5.76372721e-02, 1.81720304e-01
+            , 3.38913526e-01, 1.36661536e+01, 2.33351831e+01, 9.23285134e+01
+            , 2.17258711e+05, 6.97215669e-01, 8.59326159e+00, 2.31165967e+00
+            , 1.26644802e+01, 4.35172133e+03, 3.43240531e-01, 4.74543518e+00
+            , 1.13821713e+00, 6.23939650e+00, 1.14990323e+03, 2.49575464e-01
+            , 3.37808249e+00, 4.93789744e-01, 3.44783102e+00, 3.75086180e+02
+            , 3.00769865e-01, 1.20090721e+01, 4.36759670e-01, 2.54387659e+00
+            , 2.04216514e+02, 2.68783214e-01, 7.46066963e+00, 2.63472301e-01
+            , 1.94554385e+00, 1.15446031e+02, 2.68355560e-01, 3.53376927e+00
+            , 2.33453224e-01, 1.36029799e+00, 7.14444363e+01, 2.69604514e-01
+            , 3.57631855e+00, 1.51648925e-01, 9.17673983e-01, 2.79857990e+01
+            , 2.39860778e-01, 3.22418644e+00, 1.29101489e-01, 7.06402532e-01
+            , 1.91323169e+01, 2.40703072e-01, 2.99417617e+00, 1.11335472e-01
+            , 6.34750200e-01, 1.50827333e+01, 2.20300750e-01, 2.88039142e+00
+            , 8.56779437e-02, 5.16255833e-01, 9.87484325e+00, 2.38350832e-01
+            , 3.24298934e+00, 8.83240887e-02, 4.08459724e-01, 7.14238534e+00
+            , 2.39916744e-01, 2.94946414e+00, 7.41187843e-02, 4.14105063e-01
+            , 6.50482105e+00, 2.13978148e-01, 3.11888447e+00, 6.91240391e-02
+            , 3.60462520e-01, 4.92546939e+00, 2.47463250e-01, 3.09338186e+00
+            , 5.29524093e-02, 2.87173667e-01, 3.24236634e+00, 2.34389462e-01
+            , 3.25824743e+00, 6.16806393e-02, 3.24321678e-01, 4.28548635e+00
+            , 2.49081304e-01, 3.01535526e+00, 4.46014203e-02, 3.06050132e-01
+            , 4.05882250e+00, 2.36357544e-01, 3.42939983e+00, 4.65432948e-02
+            , 2.90969176e-01, 3.97690060e+00, 2.25342945e-01, 3.00115412e+00
+            , 4.13538087e-02, 2.76777189e-01, 3.47179090e+00, 2.30088369e-01
+            , 3.53529895e+00, 3.69561660e-02, 2.76806279e-01, 3.33182020e+00
+            , 2.22269036e-01, 3.24599418e+00]
+
+        temp_file.write(content)
+        filename = temp_file.name
+        y, sr = librosa.load(filename, mono=True, duration=30)
+        chroma_stft = librosa.feature.chroma_stft(y=y, sr=sr)
+        chroma_delta = librosa.feature.delta(chroma_stft)
+
+        spec_cent = librosa.feature.spectral_centroid(y=y, sr=sr)
+        cent_delta = librosa.feature.delta(spec_cent)
+
+        spec_bw = librosa.feature.spectral_bandwidth(y=y, sr=sr)
+        bw_delta = librosa.feature.delta(spec_bw)
+
+        rolloff = librosa.feature.spectral_rolloff(y=y, sr=sr)
+        rolloff_delta = librosa.feature.delta(rolloff)
+
+        zcr = librosa.feature.zero_crossing_rate(y)
+        zcr_delta = librosa.feature.delta(zcr)
+
+        spec_flat = librosa.feature.spectral_flatness(y=y)
+        flat_delta = librosa.feature.delta(spec_flat)
+
+        spec_contr = librosa.feature.spectral_contrast(y=y, sr=sr)
+        contr_delta = librosa.feature.delta(spec_contr)
+
+        mfcc = librosa.feature.mfcc(y=y, sr=sr)
+        mfcc_delta = librosa.feature.delta(mfcc)
+        features = []
+        features.extend([np.mean(chroma_stft), np.std(chroma_stft), np.var(chroma_stft), stats.skew(chroma_stft,axis=None), stats.kurtosis(chroma_stft,axis=None),
+                         np.mean(spec_cent), np.std(spec_cent), np.var(spec_cent), stats.skew(spec_cent,axis=None), stats.kurtosis(spec_cent,axis=None),
+                         np.mean(spec_bw), np.std(spec_bw), np.var(spec_bw), stats.skew(spec_bw,axis=None), stats.kurtosis(spec_bw,axis=None),
+                         np.mean(rolloff), np.std(rolloff), np.var(rolloff), stats.skew(rolloff,axis=None), stats.kurtosis(rolloff,axis=None),
+                         np.mean(zcr), np.std(zcr), np.var(zcr), stats.skew(zcr,axis=None), stats.kurtosis(zcr,axis=None),
+                         np.mean(spec_flat), np.std(spec_flat), np.var(spec_flat), stats.skew(spec_flat,axis=None), stats.kurtosis(spec_flat,axis=None),
+                         np.mean(spec_contr), np.std(spec_contr), np.var(spec_contr), stats.skew(spec_contr,axis=None), stats.kurtosis(spec_contr,axis=None)])
+        for e in mfcc:
+            features.extend( [np.mean(e), np.std(e), np.var(e), stats.skew(e,axis=None), stats.kurtosis(e,axis=None)])
+
+        features.extend([ np.mean(chroma_delta), np.std(chroma_delta), np.var(chroma_delta), stats.skew(chroma_delta,axis=None), stats.kurtosis(chroma_delta,axis=None),
+                          np.mean(cent_delta), np.std(cent_delta), np.var(cent_delta), stats.skew(cent_delta,axis=None), stats.kurtosis(cent_delta,axis=None),
+                          np.mean(bw_delta), np.std(bw_delta), np.var(bw_delta), stats.skew(bw_delta,axis=None), stats.kurtosis(bw_delta,axis=None),
+                          np.mean(rolloff_delta), np.std(rolloff_delta), np.var(rolloff_delta), stats.skew(rolloff_delta,axis=None), stats.kurtosis(rolloff_delta,axis=None),
+                          np.mean(zcr_delta), np.std(zcr_delta), np.var(zcr_delta), stats.skew(zcr_delta,axis=None), stats.kurtosis(zcr_delta,axis=None),
+                          np.mean(flat_delta), np.std(flat_delta), np.var(flat_delta), stats.skew(flat_delta,axis=None), stats.kurtosis(flat_delta,axis=None),
+                          np.mean(contr_delta), np.std(contr_delta), np.var(contr_delta), stats.skew(contr_delta,axis=None), stats.kurtosis(contr_delta,axis=None)])
+
+        for e in mfcc_delta:
+            features.extend( [np.mean(e), np.std(e), np.var(e), stats.skew(e,axis=None), stats.kurtosis(e,axis=None)])
+        for i in range(len(features)):
+            features[i] = (features[i]-mean[i])/std[i]
+        return features
+
+
 def zcr(window):
-	window2 = np.zeros(len(window))
-	window2[1:] = window[0:-1]
-	Z = (1/(2*len(window))) * np.sum(np.abs(np.sign(window)-np.sign(window2)))
-	return Z
+    window2 = np.zeros(len(window))
+    window2[1:] = window[0:-1]
+    Z = (1/(2*len(window))) * np.sum(np.abs(np.sign(window)-np.sign(window2)))
+    return Z
 
 def minimaxscaling(x):
-	min_x = np.min(x)
-	max_x = np.max(x)
-	y = (x-min_x)/(max_x-min_x)
-	return y
+    min_x = np.min(x)
+    max_x = np.max(x)
+    y = (x-min_x)/(max_x-min_x)
+    return y
 
 
 def zcr_signal(x,Fs,window_length,noverlap):
-# zcr_seq = zcr_signal(x,Fs,window_length,noverlap)
-# Inputs:
-# x: input signal
-# Fs: sample rate
-# window_length: length of the window
-# noverlap: percentage of overlap on windows
-#
-# Output:
-# zcr_seq: zero-crossing sequence
-# t_zcr: x-axis of zero-crossing sequence
-	N = len(x)
-	t = np.linspace(0,(N-1)/Fs,N)
-	t = np.array([1000*i for i in t])
-	y = (x-np.mean(x))
-	y = np.array([i+0.05*randn() for i  in y])
+    # zcr_seq = zcr_signal(x,Fs,window_length,noverlap)
+    # Inputs:
+    # x: input signal
+    # Fs: sample rate
+    # window_length: length of the window
+    # noverlap: percentage of overlap on windows
+    #
+    # Output:
+    # zcr_seq: zero-crossing sequence
+    # t_zcr: x-axis of zero-crossing sequence
+    N = len(x)
+    t = np.linspace(0,(N-1)/Fs,N)
+    t = np.array([1000*i for i in t])
+    y = (x-np.mean(x))
+    y = np.array([i+0.05*randn() for i  in y])
 
-	zcr_seq = []
-	for i in range(0, int(N-window_length), int(np.round(window_length - noverlap*window_length))):
-		if N - i >= np.round(window_length - noverlap*window_length):
-			window = y[i:int(i+window_length-1)]
-		else:
-			window = y[i:]
-	    
-		zcr_seq.append(zcr(window))
+    zcr_seq = []
+    for i in range(0, int(N-window_length), int(np.round(window_length - noverlap*window_length))):
+        if N - i >= np.round(window_length - noverlap*window_length):
+            window = y[i:int(i+window_length-1)]
+        else:
+            window = y[i:]
 
-	zcr_seq = minimaxscaling(zcr_seq)
-	t_zcr = np.arange(0,N-window_length,np.round(window_length - noverlap*window_length))
-	t_zcr = np.array([1000/Fs*i for i in t_zcr])
+        zcr_seq.append(zcr(window))
 
-	if len(zcr_seq) != len(t_zcr):
-		m = np.min([len(zcr_seq),len(t_zcr)])
-		t_zcr = t_zcr[:m]
-		zcr_seq = zcr_seq[:m]
+    zcr_seq = minimaxscaling(zcr_seq)
+    t_zcr = np.arange(0,N-window_length,np.round(window_length - noverlap*window_length))
+    t_zcr = np.array([1000/Fs*i for i in t_zcr])
 
-	return t_zcr, zcr_seq
+    if len(zcr_seq) != len(t_zcr):
+        m = np.min([len(zcr_seq),len(t_zcr)])
+        t_zcr = t_zcr[:m]
+        zcr_seq = zcr_seq[:m]
+
+    return t_zcr, zcr_seq
 
 
 def cough_detection(zcr_seq, time_step):
 
-	thres = 0.6
-	below = np.array([i for i,val in enumerate(zcr_seq) if val<thres])
-	below_sec = [(b-1)*time_step for b in below]
-	
-
-	diff_below = np.diff(below)
-	break_points = [i for i,val in enumerate(diff_below) if val>1]
-	break_points.append(int(len(diff_below)))
-	break_points = [int(i) for i in break_points]
-
-	break_sec = [(b-1)*time_step for b in below[break_points]]
+    thres = 0.6
+    below = np.array([i for i,val in enumerate(zcr_seq) if val<thres])
+    below_sec = [(b-1)*time_step for b in below]
 
 
-	t_coughs = np.array([0,0])
-	start_cough = below_sec[0]
-	for i in range(len(break_sec)):
-		if (break_sec[i] + time_step) - start_cough > 250:
-			margin = 2
-			if start_cough - margin*time_step >= 0:
-				t_coughs = np.vstack((t_coughs, np.array([start_cough - margin*time_step, break_sec[i] + margin*time_step]) ))
-			else:
-				t_coughs = np.vstack((t_coughs, np.array([start_cough - time_step, break_sec[i]+margin*time_step]) ))
+    diff_below = np.diff(below)
+    break_points = [i for i,val in enumerate(diff_below) if val>1]
+    break_points.append(int(len(diff_below)))
+    break_points = [int(i) for i in break_points]
 
-			if i != len(break_sec)-1:
-				start_cough = below_sec[break_points[i]+1];
+    break_sec = [(b-1)*time_step for b in below[break_points]]
 
 
-	return t_coughs[1:, :]
+    t_coughs = np.array([0,0])
+    start_cough = below_sec[0]
+    for i in range(len(break_sec)):
+        if (break_sec[i] + time_step) - start_cough > 250:
+            margin = 2
+            if start_cough - margin*time_step >= 0:
+                t_coughs = np.vstack((t_coughs, np.array([start_cough - margin*time_step, break_sec[i] + margin*time_step]) ))
+            else:
+                t_coughs = np.vstack((t_coughs, np.array([start_cough - time_step, break_sec[i]+margin*time_step]) ))
 
-def features_extractor_cough_check(content):
-    with tempfile.NamedTemporaryFile() as temp_file:
-        temp_file.write(content)
-        file = temp_file.name
+            if i != len(break_sec)-1:
+                start_cough = below_sec[break_points[i]+1];
 
-        mean = [-3.69927616e+02, 9.67561842e+01, -1.71741886e+01, 3.08622349e+01
-        -7.32874299e+00, 1.01915622e+01, -9.89172891e+00, -4.45252355e+00,
-        -7.62645241e+00, 5.84742125e-01, -2.09174257e+00, -1.01896040e+00,
-        4.09643838e-03, 9.45119015e-01, 6.21938373e-02, -1.61835618e+00,
-        -3.09230554e+00, -5.74668364e-01, -3.09339893e+00, 5.20226574e-01,
-        -2.30518261e+00, 1.62676460e+00, -2.50008590e+00, 5.80153025e-02,
-        -5.37869164e-01, -3.46216286e-01, 1.56239023e-01, 1.02772973e+00,
-        8.91919496e-01, 3.88864974e-01, 1.17419420e+00, 3.63955477e-01,
-        1.14236477e+00, 5.37340648e-01, 8.89269516e-01, 1.15258139e+00,
-        9.20603105e-01, 1.01303091e+00, 4.08691641e-01, 6.21684100e-01]
-        
-        std =[3.03670300e+04, 1.23904801e+03, 7.14204553e+02, 3.57561985e+02,
-        3.91347190e+02, 1.51894655e+02, 1.68595485e+02, 9.42890908e+01,
-        6.87454188e+01, 1.25226163e+02, 4.57417397e+01, 1.10169636e+02,
-        3.14972642e+01, 1.04585907e+02, 2.87016627e+01, 4.34448383e+01,
-        1.89018698e+01, 2.75685934e+01, 1.60123936e+01, 2.41068210e+01,
-        2.09657723e+01, 1.60303872e+01, 1.55640694e+01, 1.33766786e+01,
-        1.35864510e+01, 1.22863456e+01, 1.36599257e+01, 1.47231111e+01,
-        1.23606211e+01, 1.03956952e+01, 1.06508109e+01, 1.26030921e+01,
-        1.08843570e+01, 1.11967946e+01, 1.01739310e+01, 9.51163272e+00,
-        7.43959219e+00, 7.55541858e+00, 4.31546240e+00, 4.66555231e+00]
 
-        audio, sample_rate = librosa.load(file, res_type='kaiser_fast')
-        mfccs_features = librosa.feature.mfcc(y=audio, sr=sample_rate, n_mfcc=40)
-        mfccs_scaled_features = np.mean(mfccs_features.T,axis=0)
-
-        for i in range(len(mfccs_scaled_features)):
-            mfccs_scaled_features[i] = (mfccs_scaled_features[i]-mean[i])/std[i]
-
-    return mfccs_scaled_features
-
+    return t_coughs[1:, :]
 
 
 def cough_save(content,name):

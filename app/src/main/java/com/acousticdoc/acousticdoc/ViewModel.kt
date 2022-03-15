@@ -13,8 +13,8 @@ class ViewModel : ViewModel() {
     private val _title= MutableLiveData<String>()
     val title: LiveData<String> = _title
 
-    private val _probability= MutableLiveData<Float>()
-    var probability: LiveData<Float> = _probability
+    private val _probability= MutableLiveData<FloatArray>()
+    var probability: LiveData<FloatArray> = _probability
 
 
     fun setModelUri(targetUri: Uri){
@@ -33,11 +33,11 @@ class ViewModel : ViewModel() {
         return _title.value
     }
 
-    fun setProbability(prob: Float){
+    fun setProbability(prob: FloatArray){
         _probability.postValue(prob)
     }
 
-    fun getProbability(): Float?{
+    fun getProbability(): FloatArray?{
         return _probability.value
     }
 

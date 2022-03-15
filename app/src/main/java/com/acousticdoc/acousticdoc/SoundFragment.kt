@@ -112,7 +112,7 @@ class SoundFragment : Fragment() {
                     val probability = sharedViewModel.getProbability()
 
                     if (probability != null) {
-                        if (probability >= 0) {
+                        if (probability[0] >= 0) {
                             sharedViewModel.setProbability(probability)
                             findNavController().navigate(R.id.action_SoundFragment_to_ResultFragment)
                         } else {
@@ -134,7 +134,7 @@ class SoundFragment : Fragment() {
     }
 
     @RequiresApi(Build.VERSION_CODES.S)
-    fun diagnosis(): Float{
+    fun diagnosis(): FloatArray{
         val py = Python.getInstance()
         val module = py.getModule("main")
 
@@ -143,10 +143,11 @@ class SoundFragment : Fragment() {
         val inputFeature0 =
             TensorBuffer.createFixedSize(intArrayOf(1, numFeatures), DataType.FLOAT32)
         val model = context?.let { Model.newInstance(it) }
-        var probability = 0f
+        var positiveProbability = 0f
+        var negativeProbability = 0f
 
         //create cough detection model and input buffer
-        val coughCheckNumFeatures = 40
+        val coughCheckNumFeatures = 270
         val inputFeature1 =
             TensorBuffer.createFixedSize(intArrayOf(1, coughCheckNumFeatures), DataType.FLOAT32)
         val model1 = context?.let { it1 -> CoughCheck.newInstance(it1) }
@@ -169,7 +170,7 @@ class SoundFragment : Fragment() {
             val coughCheckFeatures =module.callAttr("features_extractor_cough_check", content).toJava(FloatArray::class.java)
             inputFeature1.loadArray(coughCheckFeatures)
         } catch (e: PyException) {
-            Toast.makeText(context, e.message, Toast.LENGTH_LONG).show()
+            e.message?.let { Log.d("python", it) }
         }
 
         //run inference
@@ -198,7 +199,7 @@ class SoundFragment : Fragment() {
             try {
                 files = module.callAttr("cough_save", content, filename).toInt()
             } catch (e: PyException) {
-                Toast.makeText(context, e.message, Toast.LENGTH_LONG).show()
+                e.message?.let { Log.d("python", it) }
             }
 
 
@@ -222,7 +223,7 @@ class SoundFragment : Fragment() {
                         module.callAttr("features_extractor_cough_check", slicedContent).toJava(FloatArray::class.java)
                     inputFeature1.loadArray(coughCheckFeatures)
                 } catch (e: PyException) {
-                    Toast.makeText(context, e.message, Toast.LENGTH_LONG).show()
+                    e.message?.let { Log.d("python", it) }
                 }
 
                 //run inference
@@ -259,7 +260,7 @@ class SoundFragment : Fragment() {
                             module.callAttr("extract", slicedContent).toJava(FloatArray::class.java)
                         inputFeature0.loadArray(features)
                     } catch (e: PyException) {
-                        Toast.makeText(context, e.message, Toast.LENGTH_LONG).show()
+                        e.message?.let { Log.d("python", it) }
                     }
 
                     val outputs = model?.process(inputFeature0)
@@ -277,22 +278,25 @@ class SoundFragment : Fragment() {
                         }
 
                     // getting the first label (Healthy) probability
-                    probability += tensorLabel?.mapWithFloatValue?.get("Healthy")!!
-                    Log.d("Prob","prob is $probability")
+                    positiveProbability += tensorLabel?.mapWithFloatValue?.get("Healthy")!!
+                    negativeProbability += tensorLabel?.mapWithFloatValue?.get("Not Healthy")!!
+                    Log.d("Prob","prob is $positiveProbability")
                 }
 
             }
-            if(coughFiles > 0)
-                probability /= coughFiles
-            else
-                probability = -1f
-            Log.d("Prob","final prob is $probability")
+            if(coughFiles > 0) {
+                positiveProbability /= coughFiles
+                negativeProbability /= coughFiles
+            }
+            else {
+                positiveProbability = -1f
+            }
+            Log.d("Prob","final positive prob is $positiveProbability and negative is $negativeProbability")
         }
         else
-            probability=-1f
+            positiveProbability=-1f
 
-
-        return probability
+        return floatArrayOf(positiveProbability,negativeProbability)
     }
 
 

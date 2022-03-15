@@ -27,18 +27,24 @@ class ResultFragment: Fragment() {
         super.onViewCreated(view, savedInstanceState)
         var probability = sharedViewModel.getProbability()
 
+        var positiveProbability = 0f
+        var negativeProbability = 0f
+        var finalProbability = 0f
+
         if (probability != null) {
-            probability= probability.toFloat()
+            positiveProbability= probability[0].toFloat()
+            negativeProbability= probability[1].toFloat()
         }
         if (probability != null) {
-            if (probability > 0.5F){
+            if (positiveProbability > negativeProbability){
+                finalProbability = positiveProbability
                 binding.health.setText(R.string.healthy)
                 binding.health.setTextColor(Color.GREEN)
                 binding.probText.setText(R.string.positive_probability)
                 binding.prob.setTextColor(Color.GREEN)
             }
-            else if (probability < 0.5F){
-                probability = 1-probability
+            else {
+                finalProbability = negativeProbability
                 binding.health.setText(R.string.unhealthy)
                 binding.health.setTextColor(Color.RED)
                 binding.probText.setText(R.string.negative_probability)
@@ -46,8 +52,8 @@ class ResultFragment: Fragment() {
             }
         }
         //Enable this to display probability on result screen
-        probability = probability?.times(100)
-        var text = "%.0f".format(probability)
+        finalProbability = finalProbability.times(100)
+        var text = "%.0f".format(finalProbability)
         text += "%"
         binding.prob.text = text
         binding.probText.visibility=View.VISIBLE
