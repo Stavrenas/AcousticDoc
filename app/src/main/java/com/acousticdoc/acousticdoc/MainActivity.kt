@@ -53,6 +53,16 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        //Delete files on startup
+        if (path != null) {
+            if (path.isDirectory) {
+                val children: Array<String> = path.list()
+                for (i in children.indices) {
+                    File(path, children[i]).delete()
+                }
+            }
+        }
+
         //Request all permissions
         requestMultiplePermissions.launch(perms)
 
