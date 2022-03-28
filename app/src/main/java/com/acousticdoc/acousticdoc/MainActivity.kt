@@ -84,7 +84,7 @@ class MainActivity : AppCompatActivity() {
             R.id.action_about -> {
                 AlertDialog.Builder(this)
                     .setTitle("Σχετικά με μας :)")
-                    .setMessage("Αυτή η εφαρμογή είναι κομμάτι της εργασίας μας στο μάθημα \"Τεχνολογία Ήχου και Εικόνας\" .\nΦοιτητές :\nΣταύρος Μαλακούδης samalako@[ECE]\nΚαραγκιοζίδης Νίκος karagkio@[ECE]\nΑγγέλου Ανδρέας aangelou@[ECE]\nΜπούγιας Νίκος nmpougias@[ECE]\nΤσακιρίδης Γιώργος tsakgeor@[ECE]\n[ECE]=ece.auth.gr")
+                    .setMessage("Αυτή η εφαρμογή είναι κομμάτι της εργασίας μας στο μάθημα \"Τεχνολογία Ήχου και Εικόνας\" .\nΦοιτητές :\nΜαλακούδης Σταύρος samalako@[ECE]\nΚαραγκιοζίδης Νίκος karagkio@[ECE]\nΑγγέλου Ανδρέας aangelou@[ECE]\nΜπούγιας Νίκος nmpougias@[ECE]\nΤσακιρίδης Γιώργος tsakgeor@[ECE]\n[ECE]=ece.auth.gr")
                     .setPositiveButton("Τέλεια!", null)
                     .show()
                 true

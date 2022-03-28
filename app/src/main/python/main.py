@@ -421,6 +421,7 @@ def zcr_signal(x,Fs,window_length,noverlap):
     # Output:
     # zcr_seq: zero-crossing sequence
     # t_zcr: x-axis of zero-crossing sequence
+
     N = len(x)
     t = np.linspace(0,(N-1)/Fs,N)
     t = np.array([1000*i for i in t])
@@ -474,7 +475,7 @@ def cough_detection(zcr_seq, time_step):
                 t_coughs = np.vstack((t_coughs, np.array([start_cough - time_step, break_sec[i]+margin*time_step]) ))
 
             if i != len(break_sec)-1:
-                start_cough = below_sec[break_points[i]+1];
+                start_cough = below_sec[break_points[i]+1]
 
 
     return t_coughs[1:, :]

@@ -165,136 +165,129 @@ class SoundFragment : Fragment() {
         val stream = uri?.let { it1 -> context?.contentResolver?.openInputStream(it1) }
         val content = stream?.readBytes()
 
-        //extract audio features
+//        //extract audio features
+//        try {
+//            val coughCheckFeatures =module.callAttr("features_extractor_cough_check", content).toJava(FloatArray::class.java)
+//            inputFeature1.loadArray(coughCheckFeatures)
+//        } catch (e: PyException) {
+//            e.message?.let { Log.d("python", it) }
+//        }
+//
+//        //run inference
+//        var coughOutputs = model1?.process(inputFeature1)
+//        var coughOutputBuffer = coughOutputs?.outputFeature0AsTensorBuffer
+//
+//        // adding labels to the output
+//        var coughTensorLabel =
+//            coughOutputBuffer?.let { it1 ->
+//                TensorLabel(
+//                    arrayListOf(
+//                        "Cough",
+//                        "Not Cough"
+//                    ), it1
+//                )
+//            }
+//
+//        var coughProbability = coughTensorLabel?.mapWithFloatValue?.get("Cough")!!
+//        var notCoughProbability = coughTensorLabel.mapWithFloatValue["Not Cough"]!!
+
+//        Log.d("Prob","Cough $coughProbability , not cough $notCoughProbability")
+
+
+        //find total files containing a cough each
+        var files = 0
         try {
-            val coughCheckFeatures =module.callAttr("features_extractor_cough_check", content).toJava(FloatArray::class.java)
-            inputFeature1.loadArray(coughCheckFeatures)
+            files = module.callAttr("cough_save", content, filename).toInt()
         } catch (e: PyException) {
             e.message?.let { Log.d("python", it) }
         }
 
-        //run inference
-        var coughOutputs = model1?.process(inputFeature1)
-        var coughOutputBuffer = coughOutputs?.outputFeature0AsTensorBuffer
 
-        // adding labels to the output
-        var coughTensorLabel =
-            coughOutputBuffer?.let { it1 ->
-                TensorLabel(
-                    arrayListOf(
-                        "Cough",
-                        "Not Cough"
-                    ), it1
-                )
-            }
+        //Check each produced file and test if it is considered as a cough
+        //if yes, proceed to feature extraction
+        var coughFiles = 0
+        for (fileNumber in 0..files) {
 
-        var coughProbability = coughTensorLabel?.mapWithFloatValue?.get("Cough")!!
-        var notCoughProbability = coughTensorLabel.mapWithFloatValue["Not Cough"]!!
+            //Get produced filename
+            val slicedFileName =
+                getFilePath().toString() + "/" + filename + "_" + fileNumber.toString() + ".wav"
+            val slicedUri = Uri.fromFile(File(slicedFileName))
+            val slicedStream =
+                slicedUri?.let { it1 -> context?.contentResolver?.openInputStream(it1) }
+            val slicedContent = slicedStream?.readBytes()
 
-        Log.d("Prob","Cough $coughProbability , not cough $notCoughProbability")
 
-        if(notCoughProbability < coughProbability) {
-            //find total files containing a cough each
-            var files = 0
+            //extract audio features
             try {
-                files = module.callAttr("cough_save", content, filename).toInt()
+                val coughCheckFeatures =
+                    module.callAttr("features_extractor_cough_check", slicedContent).toJava(FloatArray::class.java)
+                inputFeature1.loadArray(coughCheckFeatures)
             } catch (e: PyException) {
                 e.message?.let { Log.d("python", it) }
             }
 
-
-            //Check each produced file and test if it is considered as a cough
-            //if yes, proceed to feature extraction
-            var coughFiles = 0
-            for (fileNumber in 0..files) {
-
-                //Get produced filename
-                val slicedFileName =
-                    getFilePath().toString() + "/" + filename + "_" + fileNumber.toString() + ".wav"
-                val slicedUri = Uri.fromFile(File(slicedFileName))
-                val slicedStream =
-                    slicedUri?.let { it1 -> context?.contentResolver?.openInputStream(it1) }
-                val slicedContent = slicedStream?.readBytes()
+            //run inference
+            val coughOutputs = model1?.process(inputFeature1)
+            val coughOutputBuffer = coughOutputs?.outputFeature0AsTensorBuffer
 
 
-                //extract audio features
+            // adding labels to the output
+            val coughTensorLabel =
+                coughOutputBuffer?.let {
+                    TensorLabel(
+                        arrayListOf(
+                            "Cough",
+                            "Not Cough"
+                        ), it
+                    )
+                }
+
+            val coughProbability = coughTensorLabel?.mapWithFloatValue?.get("Cough")!!
+            val notCoughProbability = coughTensorLabel.mapWithFloatValue["Not Cough"]!!
+            Log.d("Prob","Cough $coughProbability , not cough $notCoughProbability file $coughFiles")
+
+            //if the file contains a cough, extract features for covid detection
+
+            if (coughProbability > notCoughProbability) {
+                coughFiles += 1
                 try {
-                    val coughCheckFeatures =
-                        module.callAttr("features_extractor_cough_check", slicedContent).toJava(FloatArray::class.java)
-                    inputFeature1.loadArray(coughCheckFeatures)
+                    val features =
+                        module.callAttr("extract", slicedContent).toJava(FloatArray::class.java)
+                    inputFeature0.loadArray(features)
                 } catch (e: PyException) {
                     e.message?.let { Log.d("python", it) }
                 }
 
-                //run inference
-                if (model1 != null) {
-                    coughOutputs = model1.process(inputFeature1)
-                }
-                if (coughOutputs != null) {
-                    coughOutputBuffer = coughOutputs.outputFeature0AsTensorBuffer
-                }
+                val outputs = model?.process(inputFeature0)
+                val outputBuffer = outputs?.outputFeature0AsTensorBuffer
 
                 // adding labels to the output
-                coughTensorLabel =
-                    coughOutputBuffer?.let {
+                val tensorLabel =
+                    outputBuffer?.let { it1 ->
                         TensorLabel(
                             arrayListOf(
-                                "Cough",
-                                "Not Cough"
-                            ), it
+                                "Healthy",
+                                "Not Healthy"
+                            ), it1
                         )
                     }
 
-
-                if (coughTensorLabel != null) {
-                    coughProbability = coughTensorLabel.mapWithFloatValue["Cough"]!!
-                    notCoughProbability = coughTensorLabel.mapWithFloatValue["Not Cough"]!!
-                }
-                Log.d("Prob","Cough $coughProbability , not cough $notCoughProbability file $coughFiles")
-
-                //if the file contains a cough, extract features for covid detection
-                if (coughProbability > notCoughProbability) {
-                    coughFiles += 1
-                    try {
-                        val features =
-                            module.callAttr("extract", slicedContent).toJava(FloatArray::class.java)
-                        inputFeature0.loadArray(features)
-                    } catch (e: PyException) {
-                        e.message?.let { Log.d("python", it) }
-                    }
-
-                    val outputs = model?.process(inputFeature0)
-                    val outputBuffer = outputs?.outputFeature0AsTensorBuffer
-
-                    // adding labels to the output
-                    val tensorLabel =
-                        outputBuffer?.let { it1 ->
-                            TensorLabel(
-                                arrayListOf(
-                                    "Healthy",
-                                    "Not Healthy"
-                                ), it1
-                            )
-                        }
-
-                    // getting the first label (Healthy) probability
-                    positiveProbability += tensorLabel?.mapWithFloatValue?.get("Healthy")!!
-                    negativeProbability += tensorLabel?.mapWithFloatValue?.get("Not Healthy")!!
-                    Log.d("Prob","prob is $positiveProbability")
-                }
-
+                // getting the first label (Healthy) probability
+                positiveProbability += tensorLabel?.mapWithFloatValue?.get("Healthy")!!
+                negativeProbability += tensorLabel.mapWithFloatValue["Not Healthy"]!!
+                Log.d("Prob","pοs is $positiveProbability and neg is $negativeProbability")
             }
-            if(coughFiles > 0) {
-                positiveProbability /= coughFiles
-                negativeProbability /= coughFiles
-            }
-            else {
-                positiveProbability = -1f
-            }
-            Log.d("Prob","final positive prob is $positiveProbability and negative is $negativeProbability")
+
         }
-        else
-            positiveProbability=-1f
+
+        Log.d("Prob","final positive prob is $positiveProbability and negative is $negativeProbability, cough files $coughFiles")
+        if(coughFiles > 0) {
+            positiveProbability /= coughFiles
+            negativeProbability /= coughFiles
+        }
+        else {
+            positiveProbability = -1f
+        }
 
         return floatArrayOf(positiveProbability,negativeProbability)
     }

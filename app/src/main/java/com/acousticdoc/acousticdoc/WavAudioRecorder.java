@@ -1,25 +1,31 @@
 package com.acousticdoc.acousticdoc;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
+import android.content.pm.PackageManager;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder.AudioSource;
 import android.util.Log;
+
+import androidx.core.app.ActivityCompat;
 
 public class WavAudioRecorder {
     private final static int[] sampleRates = {44100, 22050, 11025, 8000};
 
     public static WavAudioRecorder getInstanse() {
         WavAudioRecorder result = null;
-        int i=0;
+        int i = 0;
         do {
             result = new WavAudioRecorder(AudioSource.MIC,
                     sampleRates[i],
                     AudioFormat.CHANNEL_IN_MONO,
                     AudioFormat.ENCODING_PCM_16BIT);
-        } while((++i<sampleRates.length) & !(result.getState() == WavAudioRecorder.State.INITIALIZING));
+        } while ((++i < sampleRates.length) & !(result.getState() == WavAudioRecorder.State.INITIALIZING));
         return result;
     }
 
@@ -30,7 +36,9 @@ public class WavAudioRecorder {
      * ERROR : reconstruction needed
      * STOPPED: reset needed
      */
-    public enum State {INITIALIZING, READY, RECORDING, ERROR, STOPPED};
+    public enum State {INITIALIZING, READY, RECORDING, ERROR, STOPPED}
+
+    ;
 
     public static final boolean RECORDING_UNCOMPRESSED = true;
     public static final boolean RECORDING_COMPRESSED = false;
@@ -40,34 +48,34 @@ public class WavAudioRecorder {
     private static final int TIMER_INTERVAL = 120;
 
     // Recorder used for uncompressed recording
-    private AudioRecord     audioRecorder = null;
+    private AudioRecord audioRecorder = null;
 
     // Output file path
-    private String          filePath = null;
+    private String filePath = null;
 
     // Recorder state; see State
-    private State          	state;
+    private State state;
 
     // File writer (only in uncompressed mode)
     private RandomAccessFile randomAccessWriter;
 
     // Number of channels, sample rate, sample size(size in bits), buffer size, audio source, sample size(see AudioFormat)
-    private short                    nChannels;
-    private int                      sRate;
-    private short                    mBitsPersample;
-    private int                      mBufferSize;
-    private int                      mAudioSource;
-    private int                      aFormat;
+    private short nChannels;
+    private int sRate;
+    private short mBitsPersample;
+    private int mBufferSize;
+    private int mAudioSource;
+    private int aFormat;
 
     // Number of frames/samples written to file on each output(only in uncompressed mode)
-    private int                      mPeriodInFrames;
+    private int mPeriodInFrames;
 
     // Buffer for output(only in uncompressed mode)
-    private byte[]                   buffer;
+    private byte[] buffer;
 
     // Number of bytes written to file after header(only in uncompressed mode)
     // after stop() is called, this size is written to the header/data chunk in the wave file
-    private int                      payloadSize;
+    private int payloadSize;
 
     /**
      *
@@ -91,17 +99,19 @@ public class WavAudioRecorder {
             int numOfBytes = audioRecorder.read(buffer, 0, buffer.length); // read audio data to buffer
 //			Log.d(WavAudioRecorder.this.getClass().getName(), state + ":" + numOfBytes);
             try {
-                randomAccessWriter.write(buffer); 		  // write audio data to file
+                randomAccessWriter.write(buffer);          // write audio data to file
                 payloadSize += buffer.length;
             } catch (IOException e) {
                 Log.e(WavAudioRecorder.class.getName(), "Error occured in updateListener, recording is aborted");
                 e.printStackTrace();
             }
         }
+
         //	reached a notification marker set by setNotificationMarkerPosition(int)
         public void onMarkerReached(AudioRecord recorder) {
         }
     };
+
     /**
      *
      *
@@ -111,6 +121,7 @@ public class WavAudioRecorder {
      * In case of errors, no exception is thrown, but the state is set to ERROR
      *
      */
+    @SuppressLint("MissingPermission")
     public WavAudioRecorder(int audioSource, int sampleRate, int channelConfig, int audioFormat) {
         try {
             if (audioFormat == AudioFormat.ENCODING_PCM_16BIT) {
@@ -126,16 +137,16 @@ public class WavAudioRecorder {
             }
 
             mAudioSource = audioSource;
-            sRate   = sampleRate;
+            sRate = sampleRate;
             aFormat = audioFormat;
 
-            mPeriodInFrames = sampleRate * TIMER_INTERVAL / 1000;		//?
-            mBufferSize = mPeriodInFrames * 2  * nChannels * mBitsPersample / 8;		//?
+            mPeriodInFrames = sampleRate * TIMER_INTERVAL / 1000;        //?
+            mBufferSize = mPeriodInFrames * 2 * nChannels * mBitsPersample / 8;        //?
             if (mBufferSize < AudioRecord.getMinBufferSize(sampleRate, channelConfig, audioFormat)) {
                 // Check to make sure buffer size is not smaller than the smallest allowed one
                 mBufferSize = AudioRecord.getMinBufferSize(sampleRate, channelConfig, audioFormat);
                 // Set frame period and timer interval accordingly
-                mPeriodInFrames = mBufferSize / ( 2 * mBitsPersample * nChannels / 8 );
+                mPeriodInFrames = mBufferSize / (2 * mBitsPersample * nChannels / 8);
                 Log.w(WavAudioRecorder.class.getName(), "Increasing buffer size to " + Integer.toString(mBufferSize));
             }
 
@@ -203,12 +214,12 @@ public class WavAudioRecorder {
                     randomAccessWriter.writeShort(Short.reverseBytes((short) 1)); // AudioFormat, 1 for PCM
                     randomAccessWriter.writeShort(Short.reverseBytes(nChannels));// Number of channels, 1 for mono, 2 for stereo
                     randomAccessWriter.writeInt(Integer.reverseBytes(sRate)); // Sample rate
-                    randomAccessWriter.writeInt(Integer.reverseBytes(sRate*nChannels*mBitsPersample/8)); // Byte rate, SampleRate*NumberOfChannels*mBitsPersample/8
-                    randomAccessWriter.writeShort(Short.reverseBytes((short)(nChannels*mBitsPersample/8))); // Block align, NumberOfChannels*mBitsPersample/8
+                    randomAccessWriter.writeInt(Integer.reverseBytes(sRate * nChannels * mBitsPersample / 8)); // Byte rate, SampleRate*NumberOfChannels*mBitsPersample/8
+                    randomAccessWriter.writeShort(Short.reverseBytes((short) (nChannels * mBitsPersample / 8))); // Block align, NumberOfChannels*mBitsPersample/8
                     randomAccessWriter.writeShort(Short.reverseBytes(mBitsPersample)); // Bits per sample
                     randomAccessWriter.writeBytes("data");
                     randomAccessWriter.writeInt(0); // Data chunk size not known yet, write 0
-                    buffer = new byte[mPeriodInFrames*mBitsPersample/8*nChannels];
+                    buffer = new byte[mPeriodInFrames * mBitsPersample / 8 * nChannels];
                     state = State.READY;
                 } else {
                     Log.e(WavAudioRecorder.class.getName(), "prepare() method called on uninitialized recorder");
@@ -219,7 +230,7 @@ public class WavAudioRecorder {
                 release();
                 state = State.ERROR;
             }
-        } catch(Exception e) {
+        } catch (Exception e) {
             if (e.getMessage() != null) {
                 Log.e(WavAudioRecorder.class.getName(), e.getMessage());
             } else {
@@ -239,7 +250,7 @@ public class WavAudioRecorder {
         if (state == State.RECORDING) {
             stop();
         } else {
-            if (state == State.READY){
+            if (state == State.READY) {
                 try {
                     randomAccessWriter.close(); // Remove prepared file
                 } catch (IOException e) {
@@ -262,6 +273,7 @@ public class WavAudioRecorder {
      * In case of exceptions the class is set to the ERROR state.
      *
      */
+    @SuppressLint("MissingPermission")
     public void reset() {
         try {
             if (state != State.ERROR) {
